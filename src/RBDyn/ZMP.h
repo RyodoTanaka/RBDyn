@@ -10,8 +10,7 @@
 
 #include <SpaceVecAlg/SpaceVecAlg>
 
-namespace rbd
-{
+namespace rbd {
 struct MultiBodyConfig;
 /**
  * Compute the ZMP in the world frame
@@ -23,9 +22,9 @@ struct MultiBodyConfig;
  * @param altitude Double representing the surface's altitude in world frame
  * @return ZMP
  */
-RBDYN_DLLAPI Eigen::Vector3d computeCentroidalZMP(MultiBodyConfig & mbc,
-                                                  Eigen::Vector3d & com,
-                                                  Eigen::Vector3d & comA,
+RBDYN_DLLAPI Eigen::Vector3d computeCentroidalZMP(MultiBodyConfig &mbc,
+                                                  Eigen::Vector3d &com,
+                                                  Eigen::Vector3d &comA,
                                                   double altitude);
 
 /**
@@ -37,7 +36,9 @@ RBDYN_DLLAPI Eigen::Vector3d computeCentroidalZMP(MultiBodyConfig & mbc,
  * @param altitude Double representing the surface's altitude in world frame
  * @return ZMP
  */
-Eigen::Vector3d computeCentroidalZMPNoGravity(Eigen::Vector3d & com, Eigen::Vector3d & comA, double altitude);
+Eigen::Vector3d computeCentroidalZMPNoGravity(Eigen::Vector3d &com,
+                                              Eigen::Vector3d &comA,
+                                              double altitude);
 
 /**
  * @brief Compute the ZMP considering the external wrench applied on the robot
@@ -51,11 +52,9 @@ Eigen::Vector3d computeCentroidalZMPNoGravity(Eigen::Vector3d & com, Eigen::Vect
  * @param mass Mass of the robot
  * @return ZMP
  */
-Eigen::Vector3d computeCentroidalZMPComplete(MultiBodyConfig & mbc,
-                                             Eigen::Vector3d & com,
-                                             Eigen::Vector3d & comA,
-                                             double altitude,
-                                             sva::ForceVecd wr_external,
-                                             double mass);
+Eigen::Vector3d
+computeCentroidalZMPComplete(MultiBodyConfig &mbc, Eigen::Vector3d &com,
+                             Eigen::Vector3d &comA, double altitude,
+                             sva::ForceVecd wr_external, double mass);
 
 } // namespace rbd

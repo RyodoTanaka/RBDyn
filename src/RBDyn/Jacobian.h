@@ -10,18 +10,15 @@
 
 #include "MultiBody.h"
 
-namespace rbd
-{
+namespace rbd {
 struct MultiBodyConfig;
 
 /** Represents a contiguous block of DoFs in a Jacobian */
-struct Block
-{
+struct Block {
   Block() = default;
-  Block(Eigen::DenseIndex startDof, Eigen::DenseIndex startJac, Eigen::DenseIndex length)
-  : startDof(startDof), startJac(startJac), length(length)
-  {
-  }
+  Block(Eigen::DenseIndex startDof, Eigen::DenseIndex startJac,
+        Eigen::DenseIndex length)
+      : startDof(startDof), startJac(startJac), length(length) {}
   /** Start of the block in the full DoF vector */
   Eigen::DenseIndex startDof;
   /** Start of the block in the jacobian's reduced DoF*/
@@ -35,8 +32,7 @@ using Blocks = std::vector<Block>;
 /**
  * Algorithm to compute the jacobian of a specified body.
  */
-class RBDYN_DLLAPI Jacobian
-{
+class RBDYN_DLLAPI Jacobian {
 public:
   Jacobian();
 
@@ -47,7 +43,8 @@ public:
    * @param point Point in the body exprimed in body coordinate.
    * @throw std::out_of_range If bodyId don't exist.
    */
-  Jacobian(const MultiBody & mb, const std::string & bodyName, const Eigen::Vector3d & point = Eigen::Vector3d::Zero());
+  Jacobian(const MultiBody &mb, const std::string &bodyName,
+           const Eigen::Vector3d &point = Eigen::Vector3d::Zero());
 
   /**
    * Compute the jacobian at the point/frame specified by X_0_p.
@@ -56,7 +53,9 @@ public:
    * @param X_0_p Jacobian point/frame
    * @return Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobian(const MultiBody & mb, const MultiBodyConfig & mbc, const sva::PTransformd & X_0_p);
+  const Eigen::MatrixXd &jacobian(const MultiBody &mb,
+                                  const MultiBodyConfig &mbc,
+                                  const sva::PTransformd &X_0_p);
 
   /**
    * Compute the jacobian in world frame.
@@ -64,7 +63,8 @@ public:
    * @param mbc Use bodyPosW and motionSubspace.
    * @return Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &jacobian(const MultiBody &mb,
+                                  const MultiBodyConfig &mbc);
 
   /**
    * Compute the jacobian in body coordinate frame.
@@ -72,7 +72,8 @@ public:
    * @param mbc Use bodyPosW and motionSubspace.
    * @return Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & bodyJacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &bodyJacobian(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc);
 
   /**
    * Compute a vector jacobian in world coordinate frame.
@@ -82,9 +83,9 @@ public:
    * @param vector Vector from then jacobian point (body coordinate).
    * @return Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & vectorJacobian(const MultiBody & mb,
-                                         const MultiBodyConfig & mbc,
-                                         const Eigen::Vector3d & vector);
+  const Eigen::MatrixXd &vectorJacobian(const MultiBody &mb,
+                                        const MultiBodyConfig &mbc,
+                                        const Eigen::Vector3d &vector);
 
   /**
    * Compute a vector jacobian in body coordinate frame.
@@ -94,9 +95,9 @@ public:
    * @param vector Vector from then jacobian point (body coordinate).
    * @return Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & vectorBodyJacobian(const MultiBody & mb,
-                                             const MultiBodyConfig & mbc,
-                                             const Eigen::Vector3d & vector);
+  const Eigen::MatrixXd &vectorBodyJacobian(const MultiBody &mb,
+                                            const MultiBodyConfig &mbc,
+                                            const Eigen::Vector3d &vector);
 
   /**
    * Compute the time derivative of the jacobian.
@@ -104,7 +105,8 @@ public:
    * @param mbc Use bodyPosW, bodyVelB, bodyVelW, and motionSubspace.
    * @return Time derivativo of the jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &jacobianDot(const MultiBody &mb,
+                                     const MultiBodyConfig &mbc);
 
   /**
    * Compute the time derivative of the jacobian in body frame.
@@ -112,7 +114,8 @@ public:
    * @param mbc Use bodyPosW, bodyVelB, bodyVelW, and motionSubspace.
    * @return Time derivativo of the jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & bodyJacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &bodyJacobianDot(const MultiBody &mb,
+                                         const MultiBodyConfig &mbc);
 
   /**
    * Compute the end body point velocity at the point/frame specified by X_b_p.
@@ -121,7 +124,8 @@ public:
    * @param X_b_p velocity point/frame.
    * @return End body point velocity in world coordinate.
    */
-  sva::MotionVecd velocity(const MultiBody & mb, const MultiBodyConfig & mbc, const sva::PTransformd & X_b_p) const;
+  sva::MotionVecd velocity(const MultiBody &mb, const MultiBodyConfig &mbc,
+                           const sva::PTransformd &X_b_p) const;
 
   /**
    * Compute the end body point velocity in world coordinate (J·alpha).
@@ -129,7 +133,8 @@ public:
    * @param mbc Use bodyPosW, bodyVelB.
    * @return End body point velocity in world coordinate.
    */
-  sva::MotionVecd velocity(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd velocity(const MultiBody &mb,
+                           const MultiBodyConfig &mbc) const;
 
   /**
    * Compute the end body point velocity in body coordinate (JBody·alpha).
@@ -137,39 +142,46 @@ public:
    * @param mbc Use bodyVelB.
    * @return End body point velocity in body coordinate.
    */
-  sva::MotionVecd bodyVelocity(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd bodyVelocity(const MultiBody &mb,
+                               const MultiBodyConfig &mbc) const;
 
   /**
-   * Compute the end body point normal acceleration in world coordinate (JDot·alpha).
+   * Compute the end body point normal acceleration in world coordinate
+   * (JDot·alpha).
    * @param mb MultiBody used has model.
    * @param mbc Use bodyVelB, jointVelocity, parentToSon.
    * @param X_b_p normal acceleration point/frame.
    * @param V_b_p X_b_p velocity.
    * @return End body point normal acceleration in world coordinate.
    */
-  sva::MotionVecd normalAcceleration(const MultiBody & mb,
-                                     const MultiBodyConfig & mbc,
-                                     const sva::PTransformd & X_b_p,
-                                     const sva::MotionVecd & V_b_p) const;
+  sva::MotionVecd normalAcceleration(const MultiBody &mb,
+                                     const MultiBodyConfig &mbc,
+                                     const sva::PTransformd &X_b_p,
+                                     const sva::MotionVecd &V_b_p) const;
 
   /**
-   * Compute the end body point normal acceleration in world coordinate (JDot·alpha).
+   * Compute the end body point normal acceleration in world coordinate
+   * (JDot·alpha).
    * @param mb MultiBody used has model.
    * @param mbc Use bodyPosW, bodyVelW, bodyVelB, jointVelocity, parentToSon.
    * @return End body point normal acceleration in world coordinate.
    */
-  sva::MotionVecd normalAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd normalAcceleration(const MultiBody &mb,
+                                     const MultiBodyConfig &mbc) const;
 
   /**
-   * Compute the end body point normal acceleration in body coordinate (JDotBody·alpha).
+   * Compute the end body point normal acceleration in body coordinate
+   * (JDotBody·alpha).
    * @param mb MultiBody used has model.
    * @param mbc Use bodyVelB, jointVelocity, parentToSon.
    * @return End body point normal acceleration in body coordinate.
    */
-  sva::MotionVecd bodyNormalAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd bodyNormalAcceleration(const MultiBody &mb,
+                                         const MultiBodyConfig &mbc) const;
 
   /**
-   * Compute the end body point normal acceleration in world coordinate (JDot·alpha).
+   * Compute the end body point normal acceleration in world coordinate
+   * (JDot·alpha).
    * @param mb MultiBody used has model.
    * @param mbc Use bodyVelB.
    * @param normalAccB Normal bodies acceleration in body frame.
@@ -177,33 +189,35 @@ public:
    * @param V_b_p X_b_p velocity.
    * @return End body point normal acceleration in world coordinate.
    */
-  sva::MotionVecd normalAcceleration(const MultiBody & mb,
-                                     const MultiBodyConfig & mbc,
-                                     const std::vector<sva::MotionVecd> & normalAccB,
-                                     const sva::PTransformd & X_b_p,
-                                     const sva::MotionVecd & V_b_p) const;
+  sva::MotionVecd
+  normalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                     const std::vector<sva::MotionVecd> &normalAccB,
+                     const sva::PTransformd &X_b_p,
+                     const sva::MotionVecd &V_b_p) const;
 
   /**
-   * Compute the end body point normal acceleration in world coordinate (JDot·alpha).
+   * Compute the end body point normal acceleration in world coordinate
+   * (JDot·alpha).
    * @param mb MultiBody used has model.
    * @param mbc Use bodyPosW, bodyVelW, bodyVelB.
    * @param normalAccB Normal bodies acceleration in body frame.
    * @return End body point normal acceleration in world coordinate.
    */
-  sva::MotionVecd normalAcceleration(const MultiBody & mb,
-                                     const MultiBodyConfig & mbc,
-                                     const std::vector<sva::MotionVecd> & normalAccB) const;
+  sva::MotionVecd
+  normalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                     const std::vector<sva::MotionVecd> &normalAccB) const;
 
   /**
-   * Compute the end body point normal acceleration in body coordinate (JDotBody·alpha).
+   * Compute the end body point normal acceleration in body coordinate
+   * (JDotBody·alpha).
    * @param mb MultiBody used has model.
    * @param mbc Use nothing.
    * @param normalAccB Normal bodies acceleration in body frame.
    * @return End body point normal acceleration in body coordinate.
    */
-  sva::MotionVecd bodyNormalAcceleration(const MultiBody & mb,
-                                         const MultiBodyConfig & mbc,
-                                         const std::vector<sva::MotionVecd> & normalAccB) const;
+  sva::MotionVecd
+  bodyNormalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                         const std::vector<sva::MotionVecd> &normalAccB) const;
 
   /**
    * Translate a jacobian at a given position.
@@ -212,10 +226,9 @@ public:
    * @param point Point to translate jacobian.
    * @param res Translated jacobian (must be allocated).
    */
-  void translateJacobian(const Eigen::Ref<const Eigen::MatrixXd> & jac,
-                         const MultiBodyConfig & mbc,
-                         const Eigen::Vector3d & point,
-                         Eigen::MatrixXd & res);
+  void translateJacobian(const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                         const MultiBodyConfig &mbc,
+                         const Eigen::Vector3d &point, Eigen::MatrixXd &res);
 
   /**
    * Translate a jacobian at a given position in body frame.
@@ -224,10 +237,10 @@ public:
    * @param point Point to translate jacobian.
    * @param res Translated jacobian (must be allocated).
    */
-  void translateBodyJacobian(const Eigen::Ref<const Eigen::MatrixXd> & jac,
-                             const MultiBodyConfig & mbc,
-                             const Eigen::Vector3d & point,
-                             Eigen::MatrixXd & res);
+  void translateBodyJacobian(const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                             const MultiBodyConfig &mbc,
+                             const Eigen::Vector3d &point,
+                             Eigen::MatrixXd &res);
 
   /**
    * Project the jacobian in the full robot parameters vector.
@@ -235,7 +248,9 @@ public:
    * @param jac Jacobian to project.
    * @param res Projected Jacobian (must be allocated).
    */
-  void fullJacobian(const MultiBody & mb, const Eigen::Ref<const Eigen::MatrixXd> & jac, Eigen::MatrixXd & res) const;
+  void fullJacobian(const MultiBody &mb,
+                    const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                    Eigen::MatrixXd &res) const;
 
   /**
    * Accumulate the projection of the jacobian in the full
@@ -244,9 +259,9 @@ public:
    * @param jac Jacobian to project.
    * @param res Projected Jacobian (must be allocated).
    */
-  void addFullJacobian(const MultiBody & mb,
-                       const Eigen::Ref<const Eigen::MatrixXd> & jac,
-                       Eigen::MatrixXd & res) const;
+  void addFullJacobian(const MultiBody &mb,
+                       const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                       Eigen::MatrixXd &res) const;
 
   /**
    * Accumulate the projection of the jacobian in the full
@@ -256,9 +271,9 @@ public:
    * @param jac Jacobian to project.
    * @param res Projected Jacobian (must be allocated).
    */
-  void addFullJacobian(const Blocks & compactPath,
-                       const Eigen::Ref<const Eigen::MatrixXd> & jac,
-                       Eigen::MatrixXd & res) const;
+  void addFullJacobian(const Blocks &compactPath,
+                       const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                       Eigen::MatrixXd &res) const;
 
   /**
    * Expand a symmetric product of a jacobian by its
@@ -266,7 +281,8 @@ public:
    * @param mb MultiBody used as model.
    * @param jac Result to expand
    */
-  Eigen::MatrixXd expand(const rbd::MultiBody & mb, const Eigen::Ref<const Eigen::MatrixXd> & jac) const;
+  Eigen::MatrixXd expand(const rbd::MultiBody &mb,
+                         const Eigen::Ref<const Eigen::MatrixXd> &jac) const;
 
   /**
    * Expand a symmetric product of a jacobian by its
@@ -275,14 +291,16 @@ public:
    * @param jac Result to expand and accumulate
    * @param res Accumulator matrix
    */
-  void expandAdd(const rbd::MultiBody & mb, const Eigen::Ref<const Eigen::MatrixXd> & jac, Eigen::MatrixXd & res) const;
+  void expandAdd(const rbd::MultiBody &mb,
+                 const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                 Eigen::MatrixXd &res) const;
 
   /**
    * Compute a compact kinematic path, i.e. the sequence of
    * consecutive blocks of DoF contained in the original path.
    * @param mb MultiBody used as model.
    */
-  Blocks compactPath(const rbd::MultiBody & mb) const;
+  Blocks compactPath(const rbd::MultiBody &mb) const;
 
   /**
    * Expand a symmetric product of a jacobian by its
@@ -293,162 +311,165 @@ public:
    * @param jac Result to expand and accumulate
    * @param res Accumulator matrix
    */
-  void expandAdd(const Blocks & compactPath,
-                 const Eigen::Ref<const Eigen::MatrixXd> & jac,
-                 Eigen::MatrixXd & res) const;
+  void expandAdd(const Blocks &compactPath,
+                 const Eigen::Ref<const Eigen::MatrixXd> &jac,
+                 Eigen::MatrixXd &res) const;
 
   /// @return MultiBody that correspond to the path between the root and
   /// the specified body.
-  MultiBody subMultiBody(const MultiBody & mb) const;
+  MultiBody subMultiBody(const MultiBody &mb) const;
 
   /// @return The joint path vector from the root to the specified body.
-  const std::vector<int> & jointsPath() const
-  {
-    return jointsPath_;
-  }
+  const std::vector<int> &jointsPath() const { return jointsPath_; }
 
   /// @return The number of degree of freedom in the joint path
-  int dof() const
-  {
-    return static_cast<int>(jac_.cols());
-  }
+  int dof() const { return static_cast<int>(jac_.cols()); }
 
   /// @return Static translation in the body exprimed in body coordinate.
-  const Eigen::Vector3d & point() const
-  {
-    return point_.translation();
-  }
+  const Eigen::Vector3d &point() const { return point_.translation(); }
 
   /// @param point Static translation in the body exprimed in body coordinate.
-  void point(const Eigen::Vector3d & point)
-  {
-    point_ = sva::PTransformd(point);
-  }
+  void point(const Eigen::Vector3d &point) { point_ = sva::PTransformd(point); }
 
   // safe version for python binding
 
   /** safe version of @see jacobian.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sJacobian(const MultiBody & mb, const MultiBodyConfig & mbc, const sva::PTransformd & X_0_p);
+  const Eigen::MatrixXd &sJacobian(const MultiBody &mb,
+                                   const MultiBodyConfig &mbc,
+                                   const sva::PTransformd &X_0_p);
 
   /** safe version of @see jacobian.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sJacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sJacobian(const MultiBody &mb,
+                                   const MultiBodyConfig &mbc);
 
   /** safe version of @see bodyJacobian.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sBodyJacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sBodyJacobian(const MultiBody &mb,
+                                       const MultiBodyConfig &mbc);
 
   /** safe version of @see vectorJacobian.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sVectorJacobian(const MultiBody & mb,
-                                          const MultiBodyConfig & mbc,
-                                          const Eigen::Vector3d & vec);
+  const Eigen::MatrixXd &sVectorJacobian(const MultiBody &mb,
+                                         const MultiBodyConfig &mbc,
+                                         const Eigen::Vector3d &vec);
 
   /** safe version of @see vectorBodyJacobian.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sVectorBodyJacobian(const MultiBody & mb,
-                                              const MultiBodyConfig & mbc,
-                                              const Eigen::Vector3d & vec);
+  const Eigen::MatrixXd &sVectorBodyJacobian(const MultiBody &mb,
+                                             const MultiBodyConfig &mbc,
+                                             const Eigen::Vector3d &vec);
 
   /** safe version of @see subMultiBody.
    * @throw std::domain_error If mb don't match jointPath.
    */
-  MultiBody sSubMultiBody(const MultiBody & mb) const;
+  MultiBody sSubMultiBody(const MultiBody &mb) const;
 
   /** safe version of @see jacobianDot.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sJacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sJacobianDot(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc);
 
   /** safe version of @see bodyJacobianDot.
    * @throw std::domain_error If mb don't match mbc or jointPath.
    */
-  const Eigen::MatrixXd & sBodyJacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sBodyJacobianDot(const MultiBody &mb,
+                                          const MultiBodyConfig &mbc);
 
   /** safe version of @see translateJacobian.
    * @throw std::domain_error If mb don't match mbc or jointPath or res
    * size missmatch.
    */
-  void sTranslateJacobian(const Eigen::MatrixXd & jac,
-                          const MultiBodyConfig & mbc,
-                          const Eigen::Vector3d & point,
-                          Eigen::MatrixXd & res);
+  void sTranslateJacobian(const Eigen::MatrixXd &jac,
+                          const MultiBodyConfig &mbc,
+                          const Eigen::Vector3d &point, Eigen::MatrixXd &res);
 
   /** safe version of @see fullJacobian.
    * @throw std::domain_error If mb don't match jointPath or res
    * size missmatch.
    */
-  void sFullJacobian(const MultiBody & mb, const Eigen::MatrixXd & jac, Eigen::MatrixXd & res) const;
+  void sFullJacobian(const MultiBody &mb, const Eigen::MatrixXd &jac,
+                     Eigen::MatrixXd &res) const;
 
   /** safe version of @see velocity.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::MotionVecd sVelocity(const MultiBody & mb, const MultiBodyConfig & mbc, const sva::PTransformd & X_b_p) const;
+  sva::MotionVecd sVelocity(const MultiBody &mb, const MultiBodyConfig &mbc,
+                            const sva::PTransformd &X_b_p) const;
 
   /** safe version of @see velocity.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::MotionVecd sVelocity(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd sVelocity(const MultiBody &mb,
+                            const MultiBodyConfig &mbc) const;
 
   /** safe version of @see normalAcceleration.
    * @throw std::domain_error If mb don't match mbc or normalAccB.
    */
-  sva::MotionVecd sNormalAcceleration(const MultiBody & mb,
-                                      const MultiBodyConfig & mbc,
-                                      const sva::PTransformd & X_b_p,
-                                      const sva::MotionVecd & V_b_p) const;
+  sva::MotionVecd sNormalAcceleration(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc,
+                                      const sva::PTransformd &X_b_p,
+                                      const sva::MotionVecd &V_b_p) const;
 
   /** safe version of @see normalAcceleration.
    * @throw std::domain_error If mb don't match mbc or normalAccB.
    */
-  sva::MotionVecd sNormalAcceleration(const MultiBody & mb,
-                                      const MultiBodyConfig & mbc,
-                                      const std::vector<sva::MotionVecd> & normalAccB,
-                                      const sva::PTransformd & X_b_p,
-                                      const sva::MotionVecd & V_b_p) const;
+  sva::MotionVecd
+  sNormalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                      const std::vector<sva::MotionVecd> &normalAccB,
+                      const sva::PTransformd &X_b_p,
+                      const sva::MotionVecd &V_b_p) const;
 
   /** safe version of @see normalAcceleration.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::MotionVecd sNormalAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd sNormalAcceleration(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc) const;
 
   /** safe version of @see bodyVelocity.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::MotionVecd sBodyVelocity(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd sBodyVelocity(const MultiBody &mb,
+                                const MultiBodyConfig &mbc) const;
 
   /** safe version of @see bodyNormalAcceleration.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::MotionVecd sBodyNormalAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  sva::MotionVecd sBodyNormalAcceleration(const MultiBody &mb,
+                                          const MultiBodyConfig &mbc) const;
 
   /** safe version of @see normalAcceleration.
    * @throw std::domain_error If mb don't match mbc or normalAccB.
    */
-  sva::MotionVecd sNormalAcceleration(const MultiBody & mb,
-                                      const MultiBodyConfig & mbc,
-                                      const std::vector<sva::MotionVecd> & normalAccB) const;
+  sva::MotionVecd
+  sNormalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                      const std::vector<sva::MotionVecd> &normalAccB) const;
 
   /** safe version of @see bodyNormalAcceleration.
    * @throw std::domain_error If mb don't match mbc or normalAccB.
    */
-  sva::MotionVecd sBodyNormalAcceleration(const MultiBody & mb,
-                                          const MultiBodyConfig & mbc,
-                                          const std::vector<sva::MotionVecd> & normalAccB) const;
+  sva::MotionVecd
+  sBodyNormalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                          const std::vector<sva::MotionVecd> &normalAccB) const;
 
 private:
-  sva::MotionVecd normalAcceleration(const MultiBodyConfig & mbc,
-                                     const sva::MotionVecd & bodyNNormalAcc,
-                                     const sva::PTransformd & X_b_p,
-                                     const sva::MotionVecd & V_b_p) const;
-  sva::MotionVecd normalAcceleration(const MultiBodyConfig & mbc, const sva::MotionVecd & bodyNNormalAcc) const;
-  sva::MotionVecd bodyNormalAcceleration(const MultiBodyConfig & mbc, const sva::MotionVecd & bodyNNormalAcc) const;
+  sva::MotionVecd normalAcceleration(const MultiBodyConfig &mbc,
+                                     const sva::MotionVecd &bodyNNormalAcc,
+                                     const sva::PTransformd &X_b_p,
+                                     const sva::MotionVecd &V_b_p) const;
+  sva::MotionVecd
+  normalAcceleration(const MultiBodyConfig &mbc,
+                     const sva::MotionVecd &bodyNNormalAcc) const;
+  sva::MotionVecd
+  bodyNormalAcceleration(const MultiBodyConfig &mbc,
+                         const sva::MotionVecd &bodyNNormalAcc) const;
 
 private:
   std::vector<int> jointsPath_;

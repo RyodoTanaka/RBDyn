@@ -19,8 +19,7 @@
 #include "Body.h"
 #include "Joint.h"
 
-namespace rbd
-{
+namespace rbd {
 class MultiBody;
 
 /**
@@ -29,8 +28,7 @@ class MultiBody;
  * to create a kinematic tree from any body as root.
  * The graph must be cycle free (closed loop is not supported).
  */
-class RBDYN_DLLAPI MultiBodyGraph
-{
+class RBDYN_DLLAPI MultiBodyGraph {
 public:
   struct Node;
 
@@ -38,17 +36,17 @@ public:
    *.Arc of the multibody graph.
    * Represent a joint of a body.
    */
-  struct Arc
-  {
+  struct Arc {
     Arc() {}
 
-    Arc(sva::PTransformd X0, const Joint & j, bool forward, std::shared_ptr<Node> n) : X(X0), joint(j), next(n)
-    {
+    Arc(sva::PTransformd X0, const Joint &j, bool forward,
+        std::shared_ptr<Node> n)
+        : X(X0), joint(j), next(n) {
       joint.forward(forward);
     }
 
-    sva::PTransformd X; ///< Position of the joint in body coordinate.
-    Joint joint; ///< Joint with right direction.
+    sva::PTransformd X;         ///< Position of the joint in body coordinate.
+    Joint joint;                ///< Joint with right direction.
     std::shared_ptr<Node> next; ///< successor node.
   };
 
@@ -56,9 +54,8 @@ public:
    * Node of the multibody graph.
    * Represent the body.
    */
-  struct Node
-  {
-    Node(const Body & b) : body(b) {}
+  struct Node {
+    Node(const Body &b) : body(b) {}
 
     Body body;
     std::vector<Arc> arcs; ///< Outgoing arc.
@@ -66,10 +63,10 @@ public:
 
 public:
   MultiBodyGraph(const std::string rootName = "Root");
-  MultiBodyGraph(const MultiBodyGraph & mbg);
+  MultiBodyGraph(const MultiBodyGraph &mbg);
   ~MultiBodyGraph();
 
-  MultiBodyGraph & operator=(const MultiBodyGraph & mbg);
+  MultiBodyGraph &operator=(const MultiBodyGraph &mbg);
 
   void clear();
 
@@ -78,14 +75,14 @@ public:
    * @param B Body to add, his body name must be unique.
    * @throw std::domain_error if the body name already exists
    */
-  void addBody(const Body & B);
+  void addBody(const Body &B);
 
   /**
    * Add a joint.
    * @param J Joint to add, his joint name must be unique.
    * @throw std::domain_error if the joint name already exists
    */
-  void addJoint(const Joint & J);
+  void addJoint(const Joint &J);
 
   /**
    * Create an arc to the graph.
@@ -99,26 +96,23 @@ public:
    * joint. If false the behavior is inversed.
    * @throw std::out_of_range If b1Name or b2Name or jointName don't exist.
    */
-  void linkBodies(const std::string & b1Name,
-                  const sva::PTransformd & tB1,
-                  const std::string & b2Name,
-                  const sva::PTransformd & tB2,
-                  const std::string & jointName,
-                  bool isB1toB2 = true);
+  void linkBodies(const std::string &b1Name, const sva::PTransformd &tB1,
+                  const std::string &b2Name, const sva::PTransformd &tB2,
+                  const std::string &jointName, bool isB1toB2 = true);
 
   /**
    * @param name Name of the node.
    * @return Node with the Name name.
    * @throw std::out_of_range if id don't exist.
    */
-  const std::shared_ptr<Node> nodeByName(const std::string & name) const;
+  const std::shared_ptr<Node> nodeByName(const std::string &name) const;
 
   /**
    * @param name Name of the joint.
    * @return Joint with the Name name.
    * @throw std::out_of_range If name don't exist.
    */
-  const std::shared_ptr<Joint> jointByName(const std::string & name) const;
+  const std::shared_ptr<Joint> jointByName(const std::string &name) const;
 
   /// @return Numbers of nodes.
   std::size_t nrNodes() const;
@@ -134,10 +128,10 @@ public:
    * @param X_b0_j0 Transformation from the root body to the root joint.
    * @throw std::out_of_range If rootBodyId don't exist.
    */
-  MultiBody makeMultiBody(const std::string & rootBodyName,
-                          bool isFixed,
-                          const sva::PTransformd & X_0_j0 = sva::PTransformd::Identity(),
-                          const sva::PTransformd & X_b0_j0 = sva::PTransformd::Identity());
+  MultiBody
+  makeMultiBody(const std::string &rootBodyName, bool isFixed,
+                const sva::PTransformd &X_0_j0 = sva::PTransformd::Identity(),
+                const sva::PTransformd &X_b0_j0 = sva::PTransformd::Identity());
 
   /**
    * Create a MultiBody from the graph.
@@ -147,10 +141,10 @@ public:
    * @param X_b0_j0 Transformation from the root body to the root joint.
    * @throw std::out_of_range If rootBodyId don't exist.
    */
-  MultiBody makeMultiBody(const std::string & rootBodyName,
-                          Joint::Type rootJointType,
-                          const sva::PTransformd & X_0_j0 = sva::PTransformd::Identity(),
-                          const sva::PTransformd & X_b0_j0 = sva::PTransformd::Identity());
+  MultiBody
+  makeMultiBody(const std::string &rootBodyName, Joint::Type rootJointType,
+                const sva::PTransformd &X_0_j0 = sva::PTransformd::Identity(),
+                const sva::PTransformd &X_b0_j0 = sva::PTransformd::Identity());
 
   /**
    * Create a MultiBody from the graph.
@@ -161,11 +155,11 @@ public:
    * @param X_b0_j0 Transformation from the root body to the root joint.
    * @throw std::out_of_range If rootBodyId don't exist.
    */
-  MultiBody makeMultiBody(const std::string & rootBodyName,
-                          Joint::Type rootJointType,
-                          const Eigen::Vector3d & axis,
-                          const sva::PTransformd & X_0_j0 = sva::PTransformd::Identity(),
-                          const sva::PTransformd & X_b0_j0 = sva::PTransformd::Identity());
+  MultiBody
+  makeMultiBody(const std::string &rootBodyName, Joint::Type rootJointType,
+                const Eigen::Vector3d &axis,
+                const sva::PTransformd &X_0_j0 = sva::PTransformd::Identity(),
+                const sva::PTransformd &X_b0_j0 = sva::PTransformd::Identity());
 
   /**
    * Remove a joint (and successor joints and bodies) from the graph.
@@ -173,7 +167,8 @@ public:
    * @param jointName Name of joint to remove.
    * @throw std::out_of_range If rootBodyName doesn't exist.
    */
-  void removeJoint(const std::string & rootBodyName, const std::string & jointName);
+  void removeJoint(const std::string &rootBodyName,
+                   const std::string &jointName);
 
   /**
    * Remove joints (and successor joints and bodies) from the graph.
@@ -182,18 +177,20 @@ public:
    * @param joints List of joints names to remove.
    * @throw std::out_of_range If rootBodyName doesn't exist.
    */
-  void removeJoints(const std::string & rootBodyName, const std::vector<std::string> & joints);
+  void removeJoints(const std::string &rootBodyName,
+                    const std::vector<std::string> &joints);
 
   /**
-   * Merge jointName child bodies in jointName parent body (merge inertia matrix)
+   * Merge jointName child bodies in jointName parent body (merge inertia
+   * matrix)
    * @param rootBodyName Name of graph root.
    * @param jointName Merge all node after jointName in jointName parent node.
    * @param jointPosByName Joint configuration by joint name.
    * @throw std::out_of_range, std::domain_error.
    */
-  void mergeSubBodies(const std::string & rootBodyName,
-                      const std::string & jointName,
-                      const std::map<std::string, std::vector<double>> & jointPosByName);
+  void mergeSubBodies(
+      const std::string &rootBodyName, const std::string &jointName,
+      const std::map<std::string, std::vector<double>> &jointPosByName);
 
   /**
    * Compute the transformation to apply on each bodies to find their original
@@ -204,8 +201,8 @@ public:
    * @throw std::out_of_range.
    */
   std::map<std::string, sva::PTransformd> bodiesBaseTransform(
-      const std::string & rootBodyName,
-      const sva::PTransformd & X_b0_j0 = sva::PTransformd::Identity());
+      const std::string &rootBodyName,
+      const sva::PTransformd &X_b0_j0 = sva::PTransformd::Identity());
 
   /**
    * Return the dictionary of successor joints name by body name.
@@ -214,7 +211,8 @@ public:
    * @return dictionary of successor joints id by body id.
    * @throw std::out_of_range.
    */
-  std::map<std::string, std::vector<std::string>> successorJoints(const std::string & rootBodyName);
+  std::map<std::string, std::vector<std::string>>
+  successorJoints(const std::string &rootBodyName);
 
   /**
    * Return the dictionary of predecessor joint name by body name.
@@ -223,17 +221,19 @@ public:
    * @return dictionary of predecessor joint name by body name.
    * @throw std::out_of_range.
    */
-  std::map<std::string, std::string> predecessorJoint(const std::string & rootBodyName);
+  std::map<std::string, std::string>
+  predecessorJoint(const std::string &rootBodyName);
 
   /**
    * Return a copy of a graph with the specified joints fixed.
    * @param other Graph to be copied.
    * @param jointsToFix Names of the joints to be fixed.
-   * @param fixAllJoints If true, all joints are fixed. The value of jointsToFix is disregarded.
+   * @param fixAllJoints If true, all joints are fixed. The value of jointsToFix
+   * is disregarded.
    * @return a copy of other with some joints fixed according to parameters.
    */
-  static MultiBodyGraph fixJoints(const MultiBodyGraph & other,
-                                  const std::vector<std::string> & jointsToFix,
+  static MultiBodyGraph fixJoints(const MultiBodyGraph &other,
+                                  const std::vector<std::string> &jointsToFix,
                                   bool fixAllJoints = false);
 
 private:
@@ -241,50 +241,51 @@ private:
    * Find the arc jointId and remove it from the graph with his sub node.
    * This function is recursive.
    */
-  bool rmArc(Node & node, const std::string & parentJointName, const std::string & jointName);
+  bool rmArc(Node &node, const std::string &parentJointName,
+             const std::string &jointName);
 
   /**
    * Remove all joint with same id than Arc::joint from MultiBodyGraph and call
    * rmNodeFromMbg on Arc::next.
    */
-  void rmArcFromMbg(const Arc & arc);
+  void rmArcFromMbg(const Arc &arc);
 
   /**
    * Call rmArcFromMbg on all outgoing arc that don't have an id equal to
    * jointIdFrom and remove node from MultiBodyGraph
    */
-  void rmNodeFromMbg(const std::string & jointNameFrom, const std::shared_ptr<Node> & node);
+  void rmNodeFromMbg(const std::string &jointNameFrom,
+                     const std::shared_ptr<Node> &node);
 
   /**
    * Find the arc jointId, merge all jointId sub nodes in jointId parent
    * sub node and remove jointId and his sub nodes from mbg.
    * This function is recursive.
    */
-  bool findMergeSubNodes(Node & node,
-                         const std::string & parentJointName,
-                         const std::string & jointName,
-                         const std::map<std::string, std::vector<double>> & jointPosByName);
+  bool findMergeSubNodes(
+      Node &node, const std::string &parentJointName,
+      const std::string &jointName,
+      const std::map<std::string, std::vector<double>> &jointPosByName);
 
   /**
    * Return node inertia merged with all his sub node in parentJointId
    * frame (after joint transform).
    */
-  sva::RBInertiad mergeSubNodes(Node & node,
-                                const std::string & parentJointName,
-                                const std::map<std::string, std::vector<double>> & jointPosByName);
+  sva::RBInertiad mergeSubNodes(
+      Node &node, const std::string &parentJointName,
+      const std::map<std::string, std::vector<double>> &jointPosByName);
 
   /**
    * Merge parent and child inertia with parent in inertia in parent body base
    * and child inertia in joint base (after transform).
    */
-  sva::RBInertiad mergeInertia(const sva::RBInertiad & parentInertia,
-                               const sva::RBInertiad & childInertia,
-                               const Joint & joint,
-                               const sva::PTransformd & X_p_j,
-                               const std::map<std::string, std::vector<double>> & jointPosByName);
+  sva::RBInertiad mergeInertia(
+      const sva::RBInertiad &parentInertia, const sva::RBInertiad &childInertia,
+      const Joint &joint, const sva::PTransformd &X_p_j,
+      const std::map<std::string, std::vector<double>> &jointPosByName);
 
   // copy mbg in this. this must be empty before calling this function.
-  void copy(const rbd::MultiBodyGraph & mbg);
+  void copy(const rbd::MultiBodyGraph &mbg);
 
 protected:
   std::string rootJointName_;

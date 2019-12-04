@@ -29,8 +29,8 @@
 
 const double TOL = 0.000001;
 
-std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeXYZSarmRandomCoM(bool isFixed = true)
-{
+std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph>
+makeXYZSarmRandomCoM(bool isFixed = true) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -79,7 +79,8 @@ std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeXYZSar
   mbg.linkBodies("b0", to, "b1", from, "j0");
   mbg.linkBodies("b1", to, "b2", from, "j1");
   mbg.linkBodies("b2", to, "b3", from, "j2");
-  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b4", PTransformd(Vector3d(-0.5, 0., 0.)), "j3");
+  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b4",
+                 PTransformd(Vector3d(-0.5, 0., 0.)), "j3");
 
   MultiBody mb = mbg.makeMultiBody("b0", isFixed);
 
@@ -89,8 +90,7 @@ std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeXYZSar
   return std::make_tuple(mb, mbc, mbg);
 }
 
-BOOST_AUTO_TEST_CASE(computeCoMTest)
-{
+BOOST_AUTO_TEST_CASE(computeCoMTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -186,8 +186,8 @@ BOOST_AUTO_TEST_CASE(computeCoMTest)
   BOOST_CHECK_THROW(sComputeCoMAcceleration(mb, mbc), std::domain_error);
 }
 
-Eigen::Vector3d makeCoMDotFromStep(const rbd::MultiBody & mb, const rbd::MultiBodyConfig & mbc)
-{
+Eigen::Vector3d makeCoMDotFromStep(const rbd::MultiBody &mb,
+                                   const rbd::MultiBodyConfig &mbc) {
   using namespace Eigen;
   using namespace rbd;
 
@@ -204,10 +204,9 @@ Eigen::Vector3d makeCoMDotFromStep(const rbd::MultiBody & mb, const rbd::MultiBo
   return (nC - oC) / step;
 }
 
-Eigen::MatrixXd makeJDotFromStep(const rbd::MultiBody & mb,
-                                 const rbd::MultiBodyConfig & mbc,
-                                 rbd::CoMJacobianDummy & jac)
-{
+Eigen::MatrixXd makeJDotFromStep(const rbd::MultiBody &mb,
+                                 const rbd::MultiBodyConfig &mbc,
+                                 rbd::CoMJacobianDummy &jac) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -225,8 +224,7 @@ Eigen::MatrixXd makeJDotFromStep(const rbd::MultiBody & mb,
   return (nJ - oJ) / step;
 }
 
-BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
-{
+BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -243,8 +241,10 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
   CoMJacobianDummy comJac(mb);
 
   /**
-   *						Test jacobian with the com speed get by differentiation.
-   *						Also test computeCoMVelocity and computeCoMAcceleration.
+   *						Test jacobian with the com speed get by
+   *differentiation.
+   *						Also test computeCoMVelocity and
+   *computeCoMAcceleration.
    */
 
   mbc.q = {{}, {0.}, {0.}, {0.}, {1., 0., 0., 0.}};
@@ -253,7 +253,9 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
 
   forwardKinematics(mb, mbc);
 
-  auto testJacCoMVelAcc = [](const rbd::MultiBody & mb, rbd::MultiBodyConfig & mbc, rbd::CoMJacobianDummy & comJac) {
+  auto testJacCoMVelAcc = [](const rbd::MultiBody &mb,
+                             rbd::MultiBodyConfig &mbc,
+                             rbd::CoMJacobianDummy &comJac) {
     forwardVelocity(mb, mbc);
     forwardAcceleration(mb, mbc);
 
@@ -277,10 +279,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
     BOOST_CHECK_SMALL((CDotDot - CoMAcc).norm(), TOL);
   };
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       mbc.alphaD[i][j] = 1.;
 
@@ -291,10 +291,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
     }
   }
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       mbc.alphaD[i][j] = 1.;
 
@@ -313,10 +311,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
   mbc.q = {{}, {0.4}, {0.2}, {-0.1}, {q.w(), q.x(), q.y(), q.z()}};
   forwardKinematics(mb, mbc);
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       mbc.alphaD[i][j] = 1.;
 
@@ -327,10 +323,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
     }
   }
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       mbc.alphaD[i][j] = 1.;
 
@@ -346,7 +340,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
   mbc = MultiBodyConfig(mb);
 
   /**
-   *						Test jacobianDot with the jacobianDot get by differentiation.
+   *						Test jacobianDot with the jacobianDot get by
+   *differentiation.
    */
 
   mbc.q = {{}, {0.}, {0.}, {0.}, {1., 0., 0., 0.}};
@@ -355,10 +350,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
 
   forwardKinematics(mb, mbc);
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       forwardVelocity(mb, mbc);
       forwardAcceleration(mb, mbc);
@@ -374,10 +367,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
     }
   }
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       forwardVelocity(mb, mbc);
       forwardAcceleration(mb, mbc);
@@ -402,10 +393,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
   mbc.q = {{}, {0.4}, {0.2}, {-0.1}, {q.w(), q.x(), q.y(), q.z()}};
   forwardKinematics(mb, mbc);
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       forwardVelocity(mb, mbc);
       forwardAcceleration(mb, mbc);
@@ -421,10 +410,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
     }
   }
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       forwardVelocity(mb, mbc);
       forwardAcceleration(mb, mbc);
@@ -457,8 +444,7 @@ BOOST_AUTO_TEST_CASE(CoMJacobianDummyTest)
   mbc = MultiBodyConfig(mb);
 }
 
-BOOST_AUTO_TEST_CASE(CoMJacobianTest)
-{
+BOOST_AUTO_TEST_CASE(CoMJacobianTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -471,8 +457,7 @@ BOOST_AUTO_TEST_CASE(CoMJacobianTest)
   std::tie(mb, mbc, mbg) = makeXYZSarmRandomCoM();
 
   std::vector<double> weight(mb.nrBodies());
-  for(std::size_t i = 0; i < weight.size(); ++i)
-  {
+  for (std::size_t i = 0; i < weight.size(); ++i) {
     weight[i] = Eigen::Matrix<double, 1, 1>::Random()(0);
   }
 
@@ -504,10 +489,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianTest)
 
   // Test jacobianDot
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       forwardVelocity(mb, mbc);
 
@@ -522,10 +505,8 @@ BOOST_AUTO_TEST_CASE(CoMJacobianTest)
     }
   }
 
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbc.alpha[i][j] = 1.;
       forwardVelocity(mb, mbc);
 
@@ -540,8 +521,7 @@ BOOST_AUTO_TEST_CASE(CoMJacobianTest)
   }
 
   // Test velocity and normal acceleration function
-  for(int i = 0; i < 50; ++i)
-  {
+  for (int i = 0; i < 50; ++i) {
     Eigen::VectorXd q(mb.nrParams()), alpha(mb.nrDof());
     q.setRandom();
     alpha.setRandom();
@@ -556,23 +536,25 @@ BOOST_AUTO_TEST_CASE(CoMJacobianTest)
     forwardAcceleration(mb, mbc);
 
     // test com velocity
-    const MatrixXd & comJacMat = comJac.jacobian(mb, mbc);
+    const MatrixXd &comJacMat = comJac.jacobian(mb, mbc);
     Vector3d velFromJac = comJacMat * alpha;
     Vector3d velFromMbc = comJac.velocity(mb, mbc);
 
     BOOST_CHECK_SMALL((velFromJac - velFromMbc).norm(), TOL);
 
     // test com normal acceleration
-    const MatrixXd & comJacDotMat = comJac.jacobianDot(mb, mbc);
+    const MatrixXd &comJacDotMat = comJac.jacobianDot(mb, mbc);
     Vector3d normalAccFromJac = comJacDotMat * alpha;
     Vector3d normalAccFromMbc1 = comJac.normalAcceleration(mb, mbc);
-    Vector3d normalAccFromMbc2 = comJac.normalAcceleration(mb, mbc, mbc.bodyAccB);
+    Vector3d normalAccFromMbc2 =
+        comJac.normalAcceleration(mb, mbc, mbc.bodyAccB);
 
     BOOST_CHECK_SMALL((normalAccFromJac - normalAccFromMbc1).norm(), TOL);
     BOOST_CHECK_SMALL((normalAccFromJac - normalAccFromMbc2).norm(), TOL);
   }
 
-  // create a multibody with new inertial parameter to test updateInertialParameters
+  // create a multibody with new inertial parameter to test
+  // updateInertialParameters
   std::tie(mb, mbc, mbg) = makeXYZSarmRandomCoM();
 
   MultiBodyGraph badMbg;
@@ -594,15 +576,16 @@ BOOST_AUTO_TEST_CASE(CoMJacobianTest)
 
   // test weight getter/setter
   std::vector<double> weight2 = comJac.weight();
-  BOOST_CHECK_EQUAL_COLLECTIONS(weight.begin(), weight.end(), weight2.begin(), weight2.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(weight.begin(), weight.end(), weight2.begin(),
+                                weight2.end());
 
-  for(std::size_t i = 0; i < weight2.size(); ++i)
-  {
+  for (std::size_t i = 0; i < weight2.size(); ++i) {
     weight2[i] += 10.;
   }
 
   comJac.weight(mb, weight2);
-  BOOST_CHECK_EQUAL_COLLECTIONS(weight2.begin(), weight2.end(), comJac.weight().begin(), comJac.weight().end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(weight2.begin(), weight2.end(),
+                                comJac.weight().begin(), comJac.weight().end());
 
   CoMJacobianDummy comJacDummyWeight2(mb, weight2);
   // test jacobian with new weight

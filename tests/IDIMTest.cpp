@@ -22,16 +22,14 @@
 // arm
 #include "Tree30Dof.h"
 
-sva::RBInertiad randomInertia()
-{
+sva::RBInertiad randomInertia() {
   Eigen::Matrix<double, 10, 1> v(Eigen::Matrix<double, 10, 1>::Random());
-  v(0) = std::abs(v(0)) + 0.001; // positive mass
+  v(0) = std::abs(v(0)) + 0.001;           // positive mass
   v.tail<6>() = v.tail<6>().array().abs(); // positive inertia
   return rbd::vectorToInertia(v);
 }
 
-BOOST_AUTO_TEST_CASE(toFrom10Vec)
-{
+BOOST_AUTO_TEST_CASE(toFrom10Vec) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -48,15 +46,13 @@ BOOST_AUTO_TEST_CASE(toFrom10Vec)
   BOOST_CHECK_EQUAL(rbi, rbi2);
 }
 
-BOOST_AUTO_TEST_CASE(IMPhiTest)
-{
+BOOST_AUTO_TEST_CASE(IMPhiTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
 
   // test that Im = IMPhi(m)*phi_i
-  for(int i = 0; i < 100; ++i)
-  {
+  for (int i = 0; i < 100; ++i) {
     RBInertiad rbi(randomInertia());
     MotionVecd m(Vector6d::Random());
 
@@ -67,20 +63,19 @@ BOOST_AUTO_TEST_CASE(IMPhiTest)
   }
 
   // test that m x^* Im = m x^* IMPhi(m)*phi_i
-  for(int i = 0; i < 100; ++i)
-  {
+  for (int i = 0; i < 100; ++i) {
     RBInertiad rbi(randomInertia());
     MotionVecd m(Vector6d::Random());
 
     ForceVecd res1 = m.crossDual(rbi * m);
-    ForceVecd res2((vector6ToCrossDualMatrix(m.vector()) * IMPhi(m)) * inertiaToVector(rbi));
+    ForceVecd res2((vector6ToCrossDualMatrix(m.vector()) * IMPhi(m)) *
+                   inertiaToVector(rbi));
 
     BOOST_CHECK_SMALL((res1 - res2).vector().norm(), 1e-8);
   }
 }
 
-BOOST_AUTO_TEST_CASE(computeY)
-{
+BOOST_AUTO_TEST_CASE(computeY) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -94,11 +89,11 @@ BOOST_AUTO_TEST_CASE(computeY)
   std::vector<Body> oldB(mb.bodies());
   std::vector<Body> newB;
   newB.reserve(oldB.size());
-  for(const Body & b : mb.bodies())
-  {
+  for (const Body &b : mb.bodies()) {
     newB.push_back(Body(randomInertia(), b.name()));
   }
-  mb = MultiBody(newB, mb.joints(), mb.predecessors(), mb.successors(), mb.parents(), mb.transforms());
+  mb = MultiBody(newB, mb.joints(), mb.predecessors(), mb.successors(),
+                 mb.parents(), mb.transforms());
 
   VectorXd inertiaVec(multiBodyToInertialVector(mb));
   VectorXd idimTorque(mb.nrDof());
@@ -107,8 +102,7 @@ BOOST_AUTO_TEST_CASE(computeY)
   InverseDynamics id(mb);
   IDIM idim(mb);
 
-  for(int i = 0; i < 50; ++i)
-  {
+  for (int i = 0; i < 50; ++i) {
     VectorXd q(VectorXd::Random(mb.nrParams()) * 4.);
     VectorXd alpha(VectorXd::Random(mb.nrDof()));
     VectorXd alphaD(VectorXd::Random(mb.nrDof()));

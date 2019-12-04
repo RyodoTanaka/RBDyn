@@ -15,8 +15,7 @@
 
 #include "Jacobian.h"
 
-namespace rbd
-{
+namespace rbd {
 class MultiBody;
 struct MultiBodyConfig;
 
@@ -26,7 +25,8 @@ struct MultiBodyConfig;
  * @param mbc Use bodyPosW.
  * @return CoM position in world frame.
  */
-RBDYN_DLLAPI Eigen::Vector3d computeCoM(const MultiBody & mb, const MultiBodyConfig & mbc);
+RBDYN_DLLAPI Eigen::Vector3d computeCoM(const MultiBody &mb,
+                                        const MultiBodyConfig &mbc);
 
 /**
  * Compute the Center of Mass (CoM) velocity of a multibody.
@@ -34,7 +34,8 @@ RBDYN_DLLAPI Eigen::Vector3d computeCoM(const MultiBody & mb, const MultiBodyCon
  * @param mbc Use bodyPosW and bodyVelB.
  * @return CoM velocity in world frame.
  */
-RBDYN_DLLAPI Eigen::Vector3d computeCoMVelocity(const MultiBody & mb, const MultiBodyConfig & mbc);
+RBDYN_DLLAPI Eigen::Vector3d computeCoMVelocity(const MultiBody &mb,
+                                                const MultiBodyConfig &mbc);
 
 /**
  * Compute the Center of Mass (CoM) acceleration of a multibody.
@@ -42,23 +43,23 @@ RBDYN_DLLAPI Eigen::Vector3d computeCoMVelocity(const MultiBody & mb, const Mult
  * @param mbc Use bodyPosW, bodyVelW, bodyVelB, and bodyAccB.
  * @return CoM velocity in world frame.
  */
-RBDYN_DLLAPI Eigen::Vector3d computeCoMAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc);
+RBDYN_DLLAPI Eigen::Vector3d computeCoMAcceleration(const MultiBody &mb,
+                                                    const MultiBodyConfig &mbc);
 
 /**
  * Compute the CoM jacobian with a simple but slow algorithm.
  */
-class RBDYN_DLLAPI CoMJacobianDummy
-{
+class RBDYN_DLLAPI CoMJacobianDummy {
 public:
   CoMJacobianDummy();
 
   /// @param mb MultiBody used has model.
-  CoMJacobianDummy(const MultiBody & mb);
+  CoMJacobianDummy(const MultiBody &mb);
   /**
    * @param mb MultiBody used has model.
    * @param weight Per body weight.
    */
-  CoMJacobianDummy(const MultiBody & mb, std::vector<double> weight);
+  CoMJacobianDummy(const MultiBody &mb, std::vector<double> weight);
 
   ~CoMJacobianDummy();
 
@@ -68,7 +69,8 @@ public:
    * @param mbc Use bodyPosW and motionSubspace.
    * @return CoM Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &jacobian(const MultiBody &mb,
+                                  const MultiBodyConfig &mbc);
 
   /**
    * Compute the time derivative of the CoM jacobian.
@@ -76,22 +78,25 @@ public:
    * @param mbc Use bodyPosW, bodyVelB, bodyVelW, and motionSubspace.
    * @return Time derivativo of the jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &jacobianDot(const MultiBody &mb,
+                                     const MultiBodyConfig &mbc);
 
   // safe version for python binding
 
   /** safe version of @see jacobian.
    * @throw std::domain_error If mb don't match mbc.
    */
-  const Eigen::MatrixXd & sJacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sJacobian(const MultiBody &mb,
+                                   const MultiBodyConfig &mbc);
 
   /** safe version of @see jacobianDot.
    * @throw std::domain_error If mb don't match mbc.
    */
-  const Eigen::MatrixXd & sJacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sJacobianDot(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc);
 
 private:
-  void init(const rbd::MultiBody & mb);
+  void init(const rbd::MultiBody &mb);
 
 private:
   Eigen::MatrixXd jac_;
@@ -106,18 +111,17 @@ private:
 /**
  * Compute the CoM jacobian
  */
-class RBDYN_DLLAPI CoMJacobian
-{
+class RBDYN_DLLAPI CoMJacobian {
 public:
   CoMJacobian();
 
   /// @param mb MultiBody used as model.
-  CoMJacobian(const MultiBody & mb);
+  CoMJacobian(const MultiBody &mb);
   /**
    * @param mb MultiBody used has model.
    * @param weight Per body weight.
    */
-  CoMJacobian(const MultiBody & mb, std::vector<double> weight);
+  CoMJacobian(const MultiBody &mb, std::vector<double> weight);
 
   /**
    * Compute bodies CoM position and mass based on a MultiBody.
@@ -125,13 +129,13 @@ public:
    * when MultiBody inertia has changed.
    * @param mb MultiBody used as model.
    */
-  void updateInertialParameters(const MultiBody & mb);
+  void updateInertialParameters(const MultiBody &mb);
 
   /// @return Per bodies weight.
-  const std::vector<double> & weight() const;
+  const std::vector<double> &weight() const;
 
   /// Per bodies weight setter.
-  void weight(const MultiBody & mb, std::vector<double> w);
+  void weight(const MultiBody &mb, std::vector<double> w);
 
   /**
    * Compute the CoM jacobian.
@@ -139,7 +143,8 @@ public:
    * @param mbc Use bodyPosW and motionSubspace.
    * @return CoM Jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &jacobian(const MultiBody &mb,
+                                  const MultiBodyConfig &mbc);
 
   /**
    * Compute the time derivative of the CoM jacobian.
@@ -147,7 +152,8 @@ public:
    * @param mbc Use bodyPosW, bodyVelB, bodyVelW, and motionSubspace.
    * @return Time derivativo of the jacobian of mb with mbc configuration.
    */
-  const Eigen::MatrixXd & jacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &jacobianDot(const MultiBody &mb,
+                                     const MultiBodyConfig &mbc);
 
   /**
    * Compute the com velocity (with weight) (J·alpha).
@@ -155,7 +161,8 @@ public:
    * @param mbc Use bodyPosW, bodyVelB.
    * @return CoM velocity (with weight).
    */
-  Eigen::Vector3d velocity(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  Eigen::Vector3d velocity(const MultiBody &mb,
+                           const MultiBodyConfig &mbc) const;
 
   /**
    * Compute the com normal acceleration (with weight) (JDot·alpha).
@@ -163,7 +170,8 @@ public:
    * @param mbc Use bodyPosW, bodyVelW, bodyVelB, jointVelocity, parentToSon.
    * @return CoM normal acceleration (with weight).
    */
-  Eigen::Vector3d normalAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc);
+  Eigen::Vector3d normalAcceleration(const MultiBody &mb,
+                                     const MultiBodyConfig &mbc);
 
   /**
    * Compute the com normal acceleration (with weight) (JDot·alpha).
@@ -172,52 +180,56 @@ public:
    * @param normalAccB Normal bodies acceleration in body frame.
    * @return CoM normal acceleration (with weight).
    */
-  Eigen::Vector3d normalAcceleration(const MultiBody & mb,
-                                     const MultiBodyConfig & mbc,
-                                     const std::vector<sva::MotionVecd> & normalAccB) const;
+  Eigen::Vector3d
+  normalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                     const std::vector<sva::MotionVecd> &normalAccB) const;
 
   // safe version for python binding
 
   /** safe version of @see updateInertialParameters.
    * @throw std::domain_error If mb don't match the mb used in constructor.
    */
-  void sUpdateInertialParameters(const MultiBody & mb);
+  void sUpdateInertialParameters(const MultiBody &mb);
 
   /** safe version of @see weight.
    * @throw std::domain_error If mb don't match the mb used in constructor
    * or w missmatch mb.
    */
-  void sWeight(const MultiBody & mb, std::vector<double> w);
+  void sWeight(const MultiBody &mb, std::vector<double> w);
 
   /** safe version of @see jacobian.
    * @throw std::domain_error If mb don't match mbc.
    */
-  const Eigen::MatrixXd & sJacobian(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sJacobian(const MultiBody &mb,
+                                   const MultiBodyConfig &mbc);
 
   /** safe version of @see jacobianDot.
    * @throw std::domain_error If mb don't match mbc.
    */
-  const Eigen::MatrixXd & sJacobianDot(const MultiBody & mb, const MultiBodyConfig & mbc);
+  const Eigen::MatrixXd &sJacobianDot(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc);
 
   /** safe version of @see velocity.
    * @throw std::domain_error If mb don't match mbc.
    */
-  Eigen::Vector3d sVelocity(const MultiBody & mb, const MultiBodyConfig & mbc) const;
+  Eigen::Vector3d sVelocity(const MultiBody &mb,
+                            const MultiBodyConfig &mbc) const;
 
   /** safe version of @see normalAcceleration.
    * @throw std::domain_error If mb don't match mbc.
    */
-  Eigen::Vector3d sNormalAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc);
+  Eigen::Vector3d sNormalAcceleration(const MultiBody &mb,
+                                      const MultiBodyConfig &mbc);
 
   /** safe version of @see normalAcceleration.
    * @throw std::domain_error If mb don't match mbc or normalAccB.
    */
-  Eigen::Vector3d sNormalAcceleration(const MultiBody & mb,
-                                      const MultiBodyConfig & mbc,
-                                      const std::vector<sva::MotionVecd> & normalAccB) const;
+  Eigen::Vector3d
+  sNormalAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc,
+                      const std::vector<sva::MotionVecd> &normalAccB) const;
 
 private:
-  void init(const rbd::MultiBody & mb);
+  void init(const rbd::MultiBody &mb);
 
 private:
   Eigen::MatrixXd jac_;
@@ -245,20 +257,23 @@ private:
  * @see computeCoM.
  * @throw std::domain_error If there is a mismatch between mb and mbc.
  */
-RBDYN_DLLAPI Eigen::Vector3d sComputeCoM(const MultiBody & mb, const MultiBodyConfig & mbc);
+RBDYN_DLLAPI Eigen::Vector3d sComputeCoM(const MultiBody &mb,
+                                         const MultiBodyConfig &mbc);
 
 /**
  * Safe version.
  * @see computeCoMVelocity.
  * @throw std::domain_error If there is a mismatch between mb and mbc.
  */
-RBDYN_DLLAPI Eigen::Vector3d sComputeCoMVelocity(const MultiBody & mb, const MultiBodyConfig & mbc);
+RBDYN_DLLAPI Eigen::Vector3d sComputeCoMVelocity(const MultiBody &mb,
+                                                 const MultiBodyConfig &mbc);
 
 /**
  * Safe version.
  * @see computeCoMAcceleration.
  * @throw std::domain_error If there is a mismatch between mb and mbc.
  */
-RBDYN_DLLAPI Eigen::Vector3d sComputeCoMAcceleration(const MultiBody & mb, const MultiBodyConfig & mbc);
+RBDYN_DLLAPI Eigen::Vector3d
+sComputeCoMAcceleration(const MultiBody &mb, const MultiBodyConfig &mbc);
 
 } // namespace rbd

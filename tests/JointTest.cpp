@@ -19,8 +19,8 @@
 
 const double TOL = 1e-10;
 
-void testRevolute(rbd::Joint::OldType type, const Eigen::Vector3d & axis, bool forward)
-{
+void testRevolute(rbd::Joint::OldType type, const Eigen::Vector3d &axis,
+                  bool forward) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -37,7 +37,8 @@ void testRevolute(rbd::Joint::OldType type, const Eigen::Vector3d & axis, bool f
   MotionVecd motion(S);
 
   // test motion
-  PTransformd rot90(AngleAxisd(-constants::pi<double>() / 2., dir * axis).matrix());
+  PTransformd rot90(
+      AngleAxisd(-constants::pi<double>() / 2., dir * axis).matrix());
 
   // test accessor
   BOOST_CHECK_EQUAL(j.type(), Joint::Rev);
@@ -51,16 +52,18 @@ void testRevolute(rbd::Joint::OldType type, const Eigen::Vector3d & axis, bool f
   std::vector<double> zeroD = {0.};
   std::vector<double> zp = j.zeroParam();
   std::vector<double> zd = j.zeroDof();
-  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(), zeroP.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(), zeroD.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(),
+                                zeroP.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(),
+                                zeroD.end());
 
   BOOST_CHECK_EQUAL(j.pose<double>({constants::pi<double>() / 2.}), rot90);
 
   BOOST_CHECK_EQUAL(j.motion({2.}).vector(), (2. * motion).vector());
 }
 
-void testPrismatic(rbd::Joint::OldType type, const Eigen::Vector3d & axis, bool forward)
-{
+void testPrismatic(rbd::Joint::OldType type, const Eigen::Vector3d &axis,
+                   bool forward) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -91,8 +94,10 @@ void testPrismatic(rbd::Joint::OldType type, const Eigen::Vector3d & axis, bool 
   std::vector<double> zeroD = {0.};
   std::vector<double> zp = j.zeroParam();
   std::vector<double> zd = j.zeroDof();
-  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(), zeroP.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(), zeroD.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(),
+                                zeroP.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(),
+                                zeroD.end());
 
   // test motion
   BOOST_CHECK_EQUAL(j.pose<double>({2.}), trans2);
@@ -101,8 +106,7 @@ void testPrismatic(rbd::Joint::OldType type, const Eigen::Vector3d & axis, bool 
   BOOST_CHECK_EQUAL(j.motion({2.}).vector(), (2. * motion).vector());
 }
 
-BOOST_AUTO_TEST_CASE(JointTest)
-{
+BOOST_AUTO_TEST_CASE(JointTest) {
   using namespace rbd;
 
   // test operator==
@@ -142,56 +146,49 @@ BOOST_AUTO_TEST_CASE(JointTest)
   BOOST_CHECK_EQUAL(j1.sMotion({0.}), j1.motion({0.}));
 }
 
-BOOST_AUTO_TEST_CASE(RevXTest)
-{
+BOOST_AUTO_TEST_CASE(RevXTest) {
   using namespace Eigen;
   using namespace rbd;
   testRevolute(Joint::RevX, Vector3d::UnitX(), true);
   testRevolute(Joint::RevX, Vector3d::UnitX(), false);
 }
 
-BOOST_AUTO_TEST_CASE(RevYTest)
-{
+BOOST_AUTO_TEST_CASE(RevYTest) {
   using namespace Eigen;
   using namespace rbd;
   testRevolute(Joint::RevY, Vector3d::UnitY(), true);
   testRevolute(Joint::RevY, Vector3d::UnitY(), false);
 }
 
-BOOST_AUTO_TEST_CASE(RevZTest)
-{
+BOOST_AUTO_TEST_CASE(RevZTest) {
   using namespace Eigen;
   using namespace rbd;
   testRevolute(Joint::RevZ, Vector3d::UnitZ(), true);
   testRevolute(Joint::RevZ, Vector3d::UnitZ(), false);
 }
 
-BOOST_AUTO_TEST_CASE(PrismXTest)
-{
+BOOST_AUTO_TEST_CASE(PrismXTest) {
   using namespace Eigen;
   using namespace rbd;
   testPrismatic(Joint::PrismX, Vector3d::UnitX(), true);
   testPrismatic(Joint::PrismX, Vector3d::UnitX(), false);
 }
 
-BOOST_AUTO_TEST_CASE(PrismYTest)
-{
+BOOST_AUTO_TEST_CASE(PrismYTest) {
   using namespace Eigen;
   using namespace rbd;
   testPrismatic(Joint::PrismY, Vector3d::UnitY(), true);
   testPrismatic(Joint::PrismY, Vector3d::UnitY(), false);
 }
 
-BOOST_AUTO_TEST_CASE(PrismZTest)
-{
+BOOST_AUTO_TEST_CASE(PrismZTest) {
   using namespace Eigen;
   using namespace rbd;
   testPrismatic(Joint::PrismZ, Vector3d::UnitZ(), true);
   testPrismatic(Joint::PrismZ, Vector3d::UnitZ(), false);
 }
 
-BOOST_AUTO_TEST_CASE(SphericalTest)
-{
+BOOST_AUTO_TEST_CASE(SphericalTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -208,8 +205,9 @@ BOOST_AUTO_TEST_CASE(SphericalTest)
   double rotY = constants::pi<double>() / 4.;
   double rotZ = constants::pi<double>();
 
-  Quaterniond quat =
-      AngleAxisd(rotX, Vector3d::UnitX()) * AngleAxisd(rotY, Vector3d::UnitY()) * AngleAxisd(rotZ, Vector3d::UnitZ());
+  Quaterniond quat = AngleAxisd(rotX, Vector3d::UnitX()) *
+                     AngleAxisd(rotY, Vector3d::UnitY()) *
+                     AngleAxisd(rotZ, Vector3d::UnitZ());
 
   std::vector<double> q = {quat.w(), quat.x(), quat.y(), quat.z()};
 
@@ -218,7 +216,8 @@ BOOST_AUTO_TEST_CASE(SphericalTest)
   // motion data
   std::vector<double> alpha;
   Vector3d alphaE = Vector3d::Random();
-  for(int i = 0; i < 3; ++i) alpha.push_back(alphaE(i));
+  for (int i = 0; i < 3; ++i)
+    alpha.push_back(alphaE(i));
 
   // test accessor
   BOOST_CHECK_EQUAL(j.type(), Joint::Spherical);
@@ -232,12 +231,15 @@ BOOST_AUTO_TEST_CASE(SphericalTest)
   std::vector<double> zeroD = {0., 0., 0.};
   std::vector<double> zp = j.zeroParam();
   std::vector<double> zd = j.zeroDof();
-  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(), zeroP.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(), zeroD.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(),
+                                zeroP.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(),
+                                zeroD.end());
 
-  // test pose
+// test pose
 #ifdef __i386__
-  BOOST_CHECK_SMALL((j.pose(q).matrix() - rot.matrix()).array().abs().sum(), TOL);
+  BOOST_CHECK_SMALL((j.pose(q).matrix() - rot.matrix()).array().abs().sum(),
+                    TOL);
 #else
   BOOST_CHECK_EQUAL(j.pose(q), rot);
 #endif
@@ -249,15 +251,15 @@ BOOST_AUTO_TEST_CASE(SphericalTest)
   j.forward(false);
   BOOST_CHECK_EQUAL(j.motionSubspace(), -S);
 #ifdef __i386__
-  BOOST_CHECK_SMALL((j.pose(q).matrix() - rot.inv().matrix()).array().abs().sum(), TOL);
+  BOOST_CHECK_SMALL(
+      (j.pose(q).matrix() - rot.inv().matrix()).array().abs().sum(), TOL);
 #else
   BOOST_CHECK_EQUAL(j.pose(q), rot.inv());
 #endif
   BOOST_CHECK_EQUAL(j.motion(alpha).vector(), -S * alphaE);
 }
 
-BOOST_AUTO_TEST_CASE(PlanarTest)
-{
+BOOST_AUTO_TEST_CASE(PlanarTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -274,14 +276,16 @@ BOOST_AUTO_TEST_CASE(PlanarTest)
   double transX = 4.;
   double transY = 0.3;
 
-  sva::PTransformd trans(RotZ(rotZ), RotZ(rotZ).transpose() * Vector3d(transX, transY, 0.));
+  sva::PTransformd trans(RotZ(rotZ),
+                         RotZ(rotZ).transpose() * Vector3d(transX, transY, 0.));
 
   std::vector<double> q = {rotZ, transX, transY};
 
   // motion data
   std::vector<double> alpha;
   Vector3d alphaE = Vector3d::Random();
-  for(int i = 0; i < 3; ++i) alpha.push_back(alphaE(i));
+  for (int i = 0; i < 3; ++i)
+    alpha.push_back(alphaE(i));
 
   // test accessor
   BOOST_CHECK_EQUAL(j.type(), Joint::Planar);
@@ -295,8 +299,10 @@ BOOST_AUTO_TEST_CASE(PlanarTest)
   std::vector<double> zeroD = {0., 0., 0.};
   std::vector<double> zp = j.zeroParam();
   std::vector<double> zd = j.zeroDof();
-  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(), zeroP.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(), zeroD.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(),
+                                zeroP.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(),
+                                zeroD.end());
 
   // test pose
   BOOST_CHECK_EQUAL(j.pose(q), trans);
@@ -311,8 +317,7 @@ BOOST_AUTO_TEST_CASE(PlanarTest)
   BOOST_CHECK_EQUAL(j.motion(alpha).vector(), -S * alphaE);
 }
 
-BOOST_AUTO_TEST_CASE(CylindricalTest)
-{
+BOOST_AUTO_TEST_CASE(CylindricalTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -337,7 +342,8 @@ BOOST_AUTO_TEST_CASE(CylindricalTest)
   // motion data
   std::vector<double> alpha;
   Vector2d alphaE = Vector2d::Random();
-  for(int i = 0; i < 2; ++i) alpha.push_back(alphaE(i));
+  for (int i = 0; i < 2; ++i)
+    alpha.push_back(alphaE(i));
 
   // test accessor
   BOOST_CHECK_EQUAL(j.type(), Joint::Cylindrical);
@@ -351,8 +357,10 @@ BOOST_AUTO_TEST_CASE(CylindricalTest)
   std::vector<double> zeroD = {0., 0.};
   std::vector<double> zp = j.zeroParam();
   std::vector<double> zd = j.zeroDof();
-  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(), zeroP.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(), zeroD.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(),
+                                zeroP.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(),
+                                zeroD.end());
 
   // test pose
   BOOST_CHECK_EQUAL(j.pose(q), X);
@@ -367,8 +375,7 @@ BOOST_AUTO_TEST_CASE(CylindricalTest)
   BOOST_CHECK_EQUAL(j.motion(alpha).vector(), -S * alphaE);
 }
 
-BOOST_AUTO_TEST_CASE(FreeTest)
-{
+BOOST_AUTO_TEST_CASE(FreeTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -384,18 +391,21 @@ BOOST_AUTO_TEST_CASE(FreeTest)
   double rotY = constants::pi<double>() / 4.;
   double rotZ = constants::pi<double>();
 
-  Quaterniond quat =
-      AngleAxisd(rotX, Vector3d::UnitX()) * AngleAxisd(rotY, Vector3d::UnitY()) * AngleAxisd(rotZ, Vector3d::UnitZ());
+  Quaterniond quat = AngleAxisd(rotX, Vector3d::UnitX()) *
+                     AngleAxisd(rotY, Vector3d::UnitY()) *
+                     AngleAxisd(rotZ, Vector3d::UnitZ());
   Vector3d trans = Vector3d::Random();
 
-  std::vector<double> q = {quat.w(), quat.x(), quat.y(), quat.z(), trans.x(), trans.y(), trans.z()};
+  std::vector<double> q = {quat.w(),  quat.x(),  quat.y(), quat.z(),
+                           trans.x(), trans.y(), trans.z()};
 
   PTransformd rot(quat.matrix().transpose(), trans);
 
   // motion data
   std::vector<double> alpha;
   Vector6d alphaE = Vector6d::Random();
-  for(int i = 0; i < 6; ++i) alpha.push_back(alphaE(i));
+  for (int i = 0; i < 6; ++i)
+    alpha.push_back(alphaE(i));
 
   // test accessor
   BOOST_CHECK_EQUAL(j.type(), Joint::Free);
@@ -409,8 +419,10 @@ BOOST_AUTO_TEST_CASE(FreeTest)
   std::vector<double> zeroD = {0., 0., 0., 0., 0., 0.};
   std::vector<double> zp = j.zeroParam();
   std::vector<double> zd = j.zeroDof();
-  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(), zeroP.end());
-  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(), zeroD.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zp.begin(), zp.end(), zeroP.begin(),
+                                zeroP.end());
+  BOOST_CHECK_EQUAL_COLLECTIONS(zd.begin(), zd.end(), zeroD.begin(),
+                                zeroD.end());
 
   // test pose
   BOOST_CHECK_SMALL((j.pose(q).matrix() - rot.matrix()).norm(), TOL);
@@ -425,8 +437,7 @@ BOOST_AUTO_TEST_CASE(FreeTest)
   BOOST_CHECK_EQUAL(j.motion(alpha).vector(), -S * alphaE);
 }
 
-BOOST_AUTO_TEST_CASE(FixedTest)
-{
+BOOST_AUTO_TEST_CASE(FixedTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;

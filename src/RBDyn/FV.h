@@ -6,8 +6,7 @@
 
 #include <rbdyn/config.hh>
 
-namespace rbd
-{
+namespace rbd {
 class MultiBody;
 struct MultiBodyConfig;
 
@@ -18,13 +17,13 @@ struct MultiBodyConfig;
  * and parentToSon.
  * Fill jointVelocity, bodyVelW and bodyVelB.
  */
-RBDYN_DLLAPI void forwardVelocity(const MultiBody & mb, MultiBodyConfig & mbc);
+RBDYN_DLLAPI void forwardVelocity(const MultiBody &mb, MultiBodyConfig &mbc);
 
 /**
  * Safe version.
  * @see forwardVelocity.
  * @throw std::domain_error If there is a mismatch between mb and mbc.
  */
-RBDYN_DLLAPI void sForwardVelocity(const MultiBody & mb, MultiBodyConfig & mbc);
+RBDYN_DLLAPI void sForwardVelocity(const MultiBody &mb, MultiBodyConfig &mbc);
 
 } // namespace rbd

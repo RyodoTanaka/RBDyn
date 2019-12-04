@@ -31,10 +31,9 @@ using namespace rbd;
 namespace constants = boost::math::constants;
 
 /// @return A robot with a single joint specified by the user
-std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeSingleJointRobot(
-    Joint::Type type,
-    const Vector3d & axis = Vector3d::UnitZ())
-{
+std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph>
+makeSingleJointRobot(Joint::Type type,
+                     const Vector3d &axis = Vector3d::UnitZ()) {
   MultiBodyGraph mbg;
 
   double mass = 1.;
@@ -61,65 +60,63 @@ std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeSingle
   return std::make_tuple(mb, mbc, mbg);
 }
 
-std::vector<double> randVec(int size, double rmin, double rmax, bool normed = false)
-{
+std::vector<double> randVec(int size, double rmin, double rmax,
+                            bool normed = false) {
   std::vector<double> v(size, 0);
   Map<VectorXd> r(&v[0], size, 1);
-  r = (rmax - rmin) * VectorXd::Random(size).cwiseAbs() + VectorXd::Constant(size, rmin);
+  r = (rmax - rmin) * VectorXd::Random(size).cwiseAbs() +
+      VectorXd::Constant(size, rmin);
 
-  if(normed) r.normalize();
+  if (normed)
+    r.normalize();
 
   return v;
 }
 
-std::tuple<std::vector<double>, std::vector<double>, std::vector<double>> randQVA(Joint::Type type)
-{
+std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
+randQVA(Joint::Type type) {
   std::vector<double> q, v, a;
-  switch(type)
-  {
-    case Joint::Rev:
-    case Joint::Prism:
-      q = randVec(1, -1, 1);
-      v = randVec(1, -1, 1);
-      a = randVec(1, -1, 1);
-      break;
-    case Joint::Spherical:
-      q = randVec(4, -1, 1, true);
-      v = randVec(3, -1, 1);
-      a = randVec(3, -1, 1);
-      break;
-    case Joint::Planar:
-      q = randVec(3, -1, 1);
-      v = randVec(3, -1, 1);
-      a = randVec(3, -1, 1);
-      break;
-    case Joint::Cylindrical:
-      q = randVec(2, -1, 1);
-      v = randVec(2, -1, 1);
-      a = randVec(2, -1, 1);
-      break;
-    case Joint::Free:
-    {
-      q = randVec(4, -1, 1, true);
-      auto qt = randVec(3, -1, 1);
-      q.insert(q.end(), qt.begin(), qt.end());
-      v = randVec(6, -1, 1);
-      a = randVec(6, -1, 1);
-      break;
-    }
-    default:
-      break;
+  switch (type) {
+  case Joint::Rev:
+  case Joint::Prism:
+    q = randVec(1, -1, 1);
+    v = randVec(1, -1, 1);
+    a = randVec(1, -1, 1);
+    break;
+  case Joint::Spherical:
+    q = randVec(4, -1, 1, true);
+    v = randVec(3, -1, 1);
+    a = randVec(3, -1, 1);
+    break;
+  case Joint::Planar:
+    q = randVec(3, -1, 1);
+    v = randVec(3, -1, 1);
+    a = randVec(3, -1, 1);
+    break;
+  case Joint::Cylindrical:
+    q = randVec(2, -1, 1);
+    v = randVec(2, -1, 1);
+    a = randVec(2, -1, 1);
+    break;
+  case Joint::Free: {
+    q = randVec(4, -1, 1, true);
+    auto qt = randVec(3, -1, 1);
+    q.insert(q.end(), qt.begin(), qt.end());
+    v = randVec(6, -1, 1);
+    a = randVec(6, -1, 1);
+    break;
+  }
+  default:
+    break;
   }
 
   return std::make_tuple(q, v, a);
 }
 
-void testConstantSpeedIntegration(Joint::Type type,
-                                  double step,
-                                  const std::vector<double> & q,
-                                  const std::vector<double> & v,
-                                  const std::vector<double> & q_expected)
-{
+void testConstantSpeedIntegration(Joint::Type type, double step,
+                                  const std::vector<double> &q,
+                                  const std::vector<double> &v,
+                                  const std::vector<double> &q_expected) {
   MultiBody mb;
   MultiBodyConfig mbc;
   MultiBodyGraph mbg;
@@ -132,18 +129,15 @@ void testConstantSpeedIntegration(Joint::Type type,
 
   eulerIntegration(mb, mbc, step);
 
-  for(size_t i = 0; i < q.size(); ++i)
-  {
+  for (size_t i = 0; i < q.size(); ++i) {
     BOOST_CHECK_CLOSE_FRACTION(q_expected[i], mbc.q[1][i], 1e-8);
   }
 }
 
-void testConstantAccelerationIntegration(Joint::Type type,
-                                         double step,
-                                         const std::vector<double> & q,
-                                         const std::vector<double> & v,
-                                         const std::vector<double> & a)
-{
+void testConstantAccelerationIntegration(Joint::Type type, double step,
+                                         const std::vector<double> &q,
+                                         const std::vector<double> &v,
+                                         const std::vector<double> &a) {
   MultiBody mb;
   MultiBodyConfig mbc;
   MultiBodyGraph mbg;
@@ -165,33 +159,36 @@ void testConstantAccelerationIntegration(Joint::Type type,
 
   // integrating with constant velocity on small time step
   const int N = 2000;
-  for(int i = 0; i < N; ++i)
-  {
+  for (int i = 0; i < N; ++i) {
     eulerIntegration(mb, mbc, step / N);
-    for(size_t j = 0; j < v.size(); ++j) mbc.alpha[1][j] += a[j] * step / N;
+    for (size_t j = 0; j < v.size(); ++j)
+      mbc.alpha[1][j] += a[j] * step / N;
     forwardKinematics(mb, mbc);
   }
 
-  for(size_t i = 0; i < q.size(); ++i)
-  {
+  for (size_t i = 0; i < q.size(); ++i) {
     BOOST_CHECK_CLOSE_FRACTION(mbc0.q[1][i], mbc.q[1][i], 1e-3);
   }
 }
 
-BOOST_AUTO_TEST_CASE(JointIntegrationTest)
-{
+BOOST_AUTO_TEST_CASE(JointIntegrationTest) {
   const double pi = constants::pi<double>();
   const double c2 = std::sqrt(2) / 2;
 
   testConstantSpeedIntegration(Joint::Rev, 1, {1}, {0.5}, {1.5});
   testConstantSpeedIntegration(Joint::Prism, 1, {1}, {0.5}, {1.5});
-  testConstantSpeedIntegration(Joint::Spherical, 1, {1, 0, 0, 0}, {pi / 2, 0, 0}, {c2, c2, 0, 0});
-  testConstantSpeedIntegration(Joint::Spherical, 1, {c2, 0, c2, 0}, {pi / 2, 0, 0}, {0.5, 0.5, 0.5, -0.5});
+  testConstantSpeedIntegration(Joint::Spherical, 1, {1, 0, 0, 0},
+                               {pi / 2, 0, 0}, {c2, c2, 0, 0});
+  testConstantSpeedIntegration(Joint::Spherical, 1, {c2, 0, c2, 0},
+                               {pi / 2, 0, 0}, {0.5, 0.5, 0.5, -0.5});
   // testConstantSpeedIntegration(Joint::Planar, 1, { 1 }, { 0.5 }, { 1.5 });
-  testConstantSpeedIntegration(Joint::Cylindrical, 1, {1, 2}, {0.5, 0.25}, {1.5, 2.25});
-  testConstantSpeedIntegration(Joint::Free, 1, {1, 0, 0, 0, 1, 2, 3}, {pi / 2, 0, 0, 0.5, 0.25, -0.5},
+  testConstantSpeedIntegration(Joint::Cylindrical, 1, {1, 2}, {0.5, 0.25},
+                               {1.5, 2.25});
+  testConstantSpeedIntegration(Joint::Free, 1, {1, 0, 0, 0, 1, 2, 3},
+                               {pi / 2, 0, 0, 0.5, 0.25, -0.5},
                                {c2, c2, 0, 0, 1.5, 2.25, 2.5});
-  testConstantSpeedIntegration(Joint::Free, 1, {c2, 0, c2, 0, 1, 2, 3}, {pi / 2, 0, 0, 0.5, 0.25, -0.5},
+  testConstantSpeedIntegration(Joint::Free, 1, {c2, 0, c2, 0, 1, 2, 3},
+                               {pi / 2, 0, 0, 0.5, 0.25, -0.5},
                                {0.5, 0.5, 0.5, -0.5, 0.5, 2.25, 2.5});
 
   std::vector<double> q, v, a;

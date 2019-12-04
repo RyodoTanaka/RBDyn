@@ -26,8 +26,7 @@
 
 const double TOL = 1e-6;
 
-BOOST_AUTO_TEST_CASE(centroidalMomentum)
-{
+BOOST_AUTO_TEST_CASE(centroidalMomentum) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -58,8 +57,7 @@ BOOST_AUTO_TEST_CASE(centroidalMomentum)
   }
 
   // test J·q against computeCentroidalMomentum
-  for(int i = 0; i < 100; ++i)
-  {
+  for (int i = 0; i < 100; ++i) {
     q.setRandom();
     q.segment<4>(mb.jointPosInParam(mb.jointIndexByName("j3"))).normalize();
     alpha.setRandom();
@@ -79,11 +77,9 @@ BOOST_AUTO_TEST_CASE(centroidalMomentum)
   }
 
   // test J·q against CentroidalMomentumMatrix::momentum
-  for(int i = 0; i < 50; ++i)
-  {
+  for (int i = 0; i < 50; ++i) {
     std::vector<double> weight(mb.nrBodies());
-    for(std::size_t i = 0; i < weight.size(); ++i)
-    {
+    for (std::size_t i = 0; i < weight.size(); ++i) {
       weight[i] = Eigen::Matrix<double, 1, 1>::Random()(0);
     }
 
@@ -108,8 +104,7 @@ BOOST_AUTO_TEST_CASE(centroidalMomentum)
   }
 }
 
-BOOST_AUTO_TEST_CASE(centroidalMomentumDot)
-{
+BOOST_AUTO_TEST_CASE(centroidalMomentumDot) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -126,8 +121,7 @@ BOOST_AUTO_TEST_CASE(centroidalMomentumDot)
   VectorXd alpha(mb.nrDof());
   VectorXd alphaD(mb.nrDof());
 
-  for(int i = 0; i < 10; ++i)
-  {
+  for (int i = 0; i < 10; ++i) {
     q.setRandom();
     q.segment<4>(mb.jointPosInParam(mb.jointIndexByName("j3"))).normalize();
     alpha.setRandom();
@@ -140,13 +134,13 @@ BOOST_AUTO_TEST_CASE(centroidalMomentumDot)
     rbd::forwardVelocity(mb, mbc);
     rbd::forwardAcceleration(mb, mbc);
 
-    for(int j = 0; j < 10; ++j)
-    {
+    for (int j = 0; j < 10; ++j) {
       Vector3d oldCom = rbd::computeCoM(mb, mbc);
       ForceVecd oldMomentum = rbd::computeCentroidalMomentum(mb, mbc, oldCom);
       Vector3d oldComVel = rbd::computeCoMVelocity(mb, mbc);
 
-      ForceVecd momentumDot = rbd::computeCentroidalMomentumDot(mb, mbc, oldCom, oldComVel);
+      ForceVecd momentumDot =
+          rbd::computeCentroidalMomentumDot(mb, mbc, oldCom, oldComVel);
       cmm.computeMatrixAndMatrixDot(mb, mbc, oldCom, oldComVel);
       MatrixXd cmmMatrix = cmm.matrix();
       MatrixXd cmmMatrixDot = cmm.matrixDot();
@@ -180,11 +174,9 @@ BOOST_AUTO_TEST_CASE(centroidalMomentumDot)
   }
 
   // test JDot·q against CentroidalMomentumMatrix::normalMomentumDot
-  for(int i = 0; i < 50; ++i)
-  {
+  for (int i = 0; i < 50; ++i) {
     std::vector<double> weight(mb.nrBodies());
-    for(std::size_t i = 0; i < weight.size(); ++i)
-    {
+    for (std::size_t i = 0; i < weight.size(); ++i) {
       weight[i] = Eigen::Matrix<double, 1, 1>::Random()(0);
     }
 
@@ -206,12 +198,15 @@ BOOST_AUTO_TEST_CASE(centroidalMomentumDot)
     Vector3d com = rbd::computeCoM(mb, mbc);
     Vector3d comDot = rbd::computeCoMVelocity(mb, mbc);
     ForceVecd normalMomentumDot1 = cmmW.normalMomentumDot(mb, mbc, com, comDot);
-    ForceVecd normalMomentumDot2 = cmmW.normalMomentumDot(mb, mbc, com, comDot, mbc.bodyAccB);
+    ForceVecd normalMomentumDot2 =
+        cmmW.normalMomentumDot(mb, mbc, com, comDot, mbc.bodyAccB);
     cmmW.computeMatrixDot(mb, mbc, com, comDot);
 
     ForceVecd normalMomentumDotM(cmmW.matrixDot() * alpha);
 
-    BOOST_CHECK_SMALL((normalMomentumDot1 - normalMomentumDotM).vector().norm(), TOL);
-    BOOST_CHECK_SMALL((normalMomentumDot2 - normalMomentumDotM).vector().norm(), TOL);
+    BOOST_CHECK_SMALL((normalMomentumDot1 - normalMomentumDotM).vector().norm(),
+                      TOL);
+    BOOST_CHECK_SMALL((normalMomentumDot2 - normalMomentumDotM).vector().norm(),
+                      TOL);
   }
 }

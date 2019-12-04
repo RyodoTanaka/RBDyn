@@ -4,35 +4,29 @@
 
 #include "RBDyn/Coriolis.h"
 
-namespace rbd
-{
+namespace rbd {
 
-Coriolis::Coriolis(const rbd::MultiBody & mb) : coriolis_(mb.nrDof(), mb.nrDof()), res_(0, 0)
-{
+Coriolis::Coriolis(const rbd::MultiBody &mb)
+    : coriolis_(mb.nrDof(), mb.nrDof()), res_(0, 0) {
   Eigen::Vector3d com;
   double mass;
-  for(int i = 0; i < mb.nrBodies(); ++i)
-  {
+  for (int i = 0; i < mb.nrBodies(); ++i) {
     mass = mb.body(i).inertia().mass();
-    if(mass > 0)
-    {
+    if (mass > 0) {
       com = mb.body(i).inertia().momentum() / mass;
-    }
-    else
-    {
+    } else {
       com.setZero();
     }
     jacs_.push_back(rbd::Jacobian(mb, mb.body(i).name(), com));
     compactPaths_.push_back(jacs_.back().compactPath(mb));
-    if(jacs_.back().dof() > res_.rows())
-    {
+    if (jacs_.back().dof() > res_.rows()) {
       res_.resize(jacs_.back().dof(), jacs_.back().dof());
     }
   }
 }
 
-const Eigen::MatrixXd & Coriolis::coriolis(const rbd::MultiBody & mb, const rbd::MultiBodyConfig & mbc)
-{
+const Eigen::MatrixXd &Coriolis::coriolis(const rbd::MultiBody &mb,
+                                          const rbd::MultiBodyConfig &mbc) {
   Eigen::Matrix3d rot;
   Eigen::Matrix3d rDot;
 
@@ -40,10 +34,9 @@ const Eigen::MatrixXd & Coriolis::coriolis(const rbd::MultiBody & mb, const rbd:
 
   coriolis_.setZero();
 
-  for(int i = 0; i < mb.nrBodies(); ++i)
-  {
-    const auto & jac = jacs_[i].jacobian(mb, mbc);
-    const auto & jacDot = jacs_[i].jacobianDot(mb, mbc);
+  for (int i = 0; i < mb.nrBodies(); ++i) {
+    const auto &jac = jacs_[i].jacobian(mb, mbc);
+    const auto &jacDot = jacs_[i].jacobianDot(mb, mbc);
 
     rot = mbc.bodyPosW[i].rotation().transpose();
     rDot.noalias() = sva::vector3ToCrossMatrix(mbc.bodyVelW[i].angular()) * rot;
@@ -55,9 +48,9 @@ const Eigen::MatrixXd & Coriolis::coriolis(const rbd::MultiBody & mb, const rbd:
     auto jDwi = jacDot.topRows<3>();
 
     double mass = mb.body(i).inertia().mass();
-    inertia = mb.body(i).inertia().inertia()
-              - sva::vector3ToCrossMatrix<double>(mass * jacs_[i].point())
-                    * sva::vector3ToCrossMatrix(jacs_[i].point()).transpose();
+    inertia = mb.body(i).inertia().inertia() -
+              sva::vector3ToCrossMatrix<double>(mass * jacs_[i].point()) *
+                  sva::vector3ToCrossMatrix(jacs_[i].point()).transpose();
 
     Eigen::Matrix3d ir = inertia * rot.transpose();
 
@@ -66,9 +59,12 @@ const Eigen::MatrixXd & Coriolis::coriolis(const rbd::MultiBody & mb, const rbd:
      *        + J_{w_i}^T \dot{R}_i I_i R_i^T J_{w_i} */
 
     res_.topLeftCorner(jacs_[i].dof(), jacs_[i].dof()).noalias() =
-        mass * jvi.transpose() * jDvi + jwi.transpose() * (rot * ir * jDwi + rDot * ir * jwi);
+        mass * jvi.transpose() * jDvi +
+        jwi.transpose() * (rot * ir * jDwi + rDot * ir * jwi);
 
-    jacs_[i].expandAdd(compactPaths_[i], res_.topLeftCorner(jacs_[i].dof(), jacs_[i].dof()), coriolis_);
+    jacs_[i].expandAdd(compactPaths_[i],
+                       res_.topLeftCorner(jacs_[i].dof(), jacs_[i].dof()),
+                       coriolis_);
   }
 
   return coriolis_;

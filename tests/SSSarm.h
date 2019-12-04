@@ -16,8 +16,8 @@
 #include "RBDyn/MultiBodyGraph.h"
 
 /// @return An simple SSS arm with Y as up axis.
-std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeSSSarm(bool isFixed = true)
-{
+std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph>
+makeSSSarm(bool isFixed = true) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;

@@ -32,19 +32,15 @@
 // arm
 #include "XXXarm.h"
 
-namespace rbd
-{
+namespace rbd {
 using namespace Eigen;
 Eigen::IOFormat cleanFmt(2, 0, ", ", "\n", "[", "]");
 
 static constexpr double PI = boost::math::constants::pi<double>();
 
 void test(boost::shared_ptr<boost::test_tools::output_test_stream> output,
-          rbd::MultiBody & mb,
-          rbd::MultiBodyConfig & mbc,
-          rbd::InverseStatics & IS,
-          Eigen::Vector3d q)
-{
+          rbd::MultiBody &mb, rbd::MultiBodyConfig &mbc,
+          rbd::InverseStatics &IS, Eigen::Vector3d q) {
   Eigen::MatrixXd jacQ(3, 3);
   Eigen::MatrixXd jacF(3, 24);
   std::vector<Eigen::MatrixXd> jacMomentAndForces(4);
@@ -60,13 +56,14 @@ void test(boost::shared_ptr<boost::test_tools::output_test_stream> output,
   (*output) << "========================================" << std::endl;
   (*output) << "Results for mbc.q =" << mbc.q << std::endl;
   (*output) << "mbc.jointTorque =\n" << mbc.jointTorque << std::endl;
-  for(auto e : IS.f()) (*output) << "IS.f().vector =\n" << e.vector() << std::endl;
+  for (auto e : IS.f())
+    (*output) << "IS.f().vector =\n" << e.vector() << std::endl;
   (*output) << "IS.jointTorqueDiff =\n" << IS.jointTorqueDiff() << std::endl;
 }
 
-BOOST_AUTO_TEST_CASE(XXXArmTorqueJacobian)
-{
-  boost::shared_ptr<boost::test_tools::output_test_stream> output = retrievePattern("InverseStaticsTest");
+BOOST_AUTO_TEST_CASE(XXXArmTorqueJacobian) {
+  boost::shared_ptr<boost::test_tools::output_test_stream> output =
+      retrievePattern("InverseStaticsTest");
 
   rbd::MultiBody mb;
   rbd::MultiBodyConfig mbc;

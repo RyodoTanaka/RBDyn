@@ -15,11 +15,8 @@
 #include "RBDyn/MultiBodyConfig.h"
 #include "RBDyn/MultiBodyGraph.h"
 
-void createLeg(rbd::MultiBodyGraph & mbg,
-               const Eigen::Vector3d & direction,
-               const std::string & parentName,
-               const std::string & prefix)
-{
+void createLeg(rbd::MultiBodyGraph &mbg, const Eigen::Vector3d &direction,
+               const std::string &parentName, const std::string &prefix) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -55,11 +52,8 @@ void createLeg(rbd::MultiBodyGraph & mbg,
   mbg.linkBodies(prefix + "LEG4", to, prefix + "LEG5", from, prefix + "LEG4_5");
 }
 
-void createArm(rbd::MultiBodyGraph & mbg,
-               const Eigen::Vector3d & direction,
-               const std::string & parentName,
-               const std::string & prefix)
-{
+void createArm(rbd::MultiBodyGraph &mbg, const Eigen::Vector3d &direction,
+               const std::string &parentName, const std::string &prefix) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -99,8 +93,8 @@ void createArm(rbd::MultiBodyGraph & mbg,
 }
 
 /// @return An simple XYZ arm with Y as up axis.
-std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeTree30Dof(bool isFixed = true)
-{
+std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph>
+makeTree30Dof(bool isFixed = true) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;

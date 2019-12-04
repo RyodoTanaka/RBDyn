@@ -16,8 +16,8 @@
 #include "RBDyn/MultiBodyGraph.h"
 
 /// @return An simple XYZ spherical arm with Y as up axis.
-std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeXYZSarm(bool isFixed = true)
-{
+std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph>
+makeXYZSarm(bool isFixed = true) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -64,7 +64,8 @@ std::tuple<rbd::MultiBody, rbd::MultiBodyConfig, rbd::MultiBodyGraph> makeXYZSar
   mbg.linkBodies("b0", to, "b1", from, "j0");
   mbg.linkBodies("b1", to, "b2", from, "j1");
   mbg.linkBodies("b2", to, "b3", from, "j2");
-  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b4", PTransformd(Vector3d(-0.5, 0., 0.)), "j3");
+  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b4",
+                 PTransformd(Vector3d(-0.5, 0., 0.)), "j3");
 
   MultiBody mb = mbg.makeMultiBody("b0", isFixed);
 

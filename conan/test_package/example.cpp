@@ -7,8 +7,7 @@
 
 #include <iostream>
 
-int main()
-{
+int main() {
   rbd::MultiBodyGraph mbg;
 
   double mass = 1.;

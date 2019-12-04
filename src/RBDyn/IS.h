@@ -13,24 +13,21 @@
 
 #include "Jacobian.h"
 
-namespace rbd
-{
+namespace rbd {
 class MultiBody;
 struct MultiBodyConfig;
 
 /**
  * Inverse Dynamics algorithm.
  */
-class RBDYN_DLLAPI InverseStatics
-{
+class RBDYN_DLLAPI InverseStatics {
 public:
   InverseStatics() {}
   /// @param mb MultiBody associated with this algorithm.
-  InverseStatics(const MultiBody & mb);
+  InverseStatics(const MultiBody &mb);
 
-  void setJacobianSize(const MultiBody & mb,
-                       const MultiBodyConfig & mbc,
-                       const std::vector<Eigen::MatrixXd> & jacMomentsAndForces);
+  void setJacobianSize(const MultiBody &mb, const MultiBodyConfig &mbc,
+                       const std::vector<Eigen::MatrixXd> &jacMomentsAndForces);
 
   /**
    * Compute the inverse statics.
@@ -39,7 +36,7 @@ public:
    * and gravity.
    * Fills bodyAccB and jointTorque.
    */
-  void inverseStatics(const MultiBody & mb, MultiBodyConfig & mbc);
+  void inverseStatics(const MultiBody &mb, MultiBodyConfig &mbc);
 
   /**
    * Compute the derivatives of the torques calculated by the
@@ -57,35 +54,31 @@ public:
    * matrix should be empty if zero to avoid unnecessary calculations.
    * Fills jointTorqueJacQ and jointTorqueJacF.
    */
-  void computeTorqueJacobianJoint(const MultiBody & mb,
-                                  MultiBodyConfig & mbc,
-                                  const std::vector<Eigen::MatrixXd> & jacMomentsAndForces);
+  void computeTorqueJacobianJoint(
+      const MultiBody &mb, MultiBodyConfig &mbc,
+      const std::vector<Eigen::MatrixXd> &jacMomentsAndForces);
 
   /**
    * Default version of computeTorqeuJacobienJoint
    * The external forces are assumed constant w.r.t q
    */
-  void computeTorqueJacobianJoint(const MultiBody & mb, MultiBodyConfig & mbc);
+  void computeTorqueJacobianJoint(const MultiBody &mb, MultiBodyConfig &mbc);
 
   // safe version for python binding
 
   /** safe version of @see inverseStatics.
    * @throw std::domain_error If mb don't match mbc.
    */
-  void sInverseStatics(const MultiBody & mb, MultiBodyConfig & mbc);
+  void sInverseStatics(const MultiBody &mb, MultiBodyConfig &mbc);
 
   /**
    * @brief Get the internal forces.
    * @return vector of forces transmitted from body λ(i) to body i across
    * joint i.
    */
-  const std::vector<sva::ForceVecd> & f() const
-  {
-    return f_;
-  };
+  const std::vector<sva::ForceVecd> &f() const { return f_; };
 
-  const std::vector<Eigen::MatrixXd> & jointTorqueDiff() const
-  {
+  const std::vector<Eigen::MatrixXd> &jointTorqueDiff() const {
     return jointTorqueDiff_;
   };
 

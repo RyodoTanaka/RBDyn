@@ -12,8 +12,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-void setRandomFreeFlyer(rbd::MultiBodyConfig & mbc)
-{
+void setRandomFreeFlyer(rbd::MultiBodyConfig &mbc) {
   Eigen::Vector3d axis = Eigen::Vector3d::Random();
   Eigen::AngleAxisd aa(0.5, axis / axis.norm());
   Eigen::Quaterniond qd(aa);
@@ -23,8 +22,7 @@ void setRandomFreeFlyer(rbd::MultiBodyConfig & mbc)
   mbc.q[0][3] = qd.z();
 }
 
-BOOST_AUTO_TEST_CASE(ExpandJacobianTest)
-{
+BOOST_AUTO_TEST_CASE(ExpandJacobianTest) {
   std::srand(133757348);
 
   rbd::MultiBody mb;
@@ -38,8 +36,7 @@ BOOST_AUTO_TEST_CASE(ExpandJacobianTest)
   rbd::Jacobian jac(mb, mb.body(mb.nrBodies() - 1).name());
   rbd::Blocks compact = jac.compactPath(mb);
 
-  for(int i = 0; i < ROUNDS; ++i)
-  {
+  for (int i = 0; i < ROUNDS; ++i) {
     mbc.zero(mb);
 
     Eigen::VectorXd q = Eigen::VectorXd::Random(mb.nrParams());

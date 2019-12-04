@@ -16,8 +16,7 @@
 // RBDyn
 #include "RBDyn/Body.h"
 
-BOOST_AUTO_TEST_CASE(BodyTest)
-{
+BOOST_AUTO_TEST_CASE(BodyTest) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;

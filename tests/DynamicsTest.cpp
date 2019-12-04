@@ -33,8 +33,7 @@
 
 const double TOL = 0.0000001;
 
-BOOST_AUTO_TEST_CASE(OneBody)
-{
+BOOST_AUTO_TEST_CASE(OneBody) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -58,7 +57,8 @@ BOOST_AUTO_TEST_CASE(OneBody)
 
   mbg.addJoint(j0);
 
-  mbg.linkBodies("b0", PTransformd::Identity(), "b1", PTransformd::Identity(), "j0");
+  mbg.linkBodies("b0", PTransformd::Identity(), "b1", PTransformd::Identity(),
+                 "j0");
 
   MultiBody mb = mbg.makeMultiBody("b0", true);
 
@@ -102,41 +102,37 @@ BOOST_AUTO_TEST_CASE(OneBody)
   BOOST_CHECK_SMALL(std::abs(torque - mbc2.jointTorque[1][0]), TOL);
 }
 
-void makeRandomVecVec(std::vector<std::vector<double>> & vec)
-{
+void makeRandomVecVec(std::vector<std::vector<double>> &vec) {
   typedef Eigen::Matrix<double, 1, 1> EScalar;
-  for(auto & v1 : vec)
-    for(auto & v2 : v1) v2 = EScalar::Random()(0) * 10.;
+  for (auto &v1 : vec)
+    for (auto &v2 : v1)
+      v2 = EScalar::Random()(0) * 10.;
 }
 
-void normalizeQuat(std::vector<double> & q)
-{
+void normalizeQuat(std::vector<double> &q) {
   Eigen::Vector4d qv(q[0], q[1], q[2], q[3]);
   double norm = qv.norm();
-  for(int i = 0; i < 4; ++i) q[i] /= norm;
+  for (int i = 0; i < 4; ++i)
+    q[i] /= norm;
 }
 
-void makeRandomConfig(rbd::MultiBodyConfig & mbc)
-{
+void makeRandomConfig(rbd::MultiBodyConfig &mbc) {
   makeRandomVecVec(mbc.q);
   makeRandomVecVec(mbc.alpha);
   makeRandomVecVec(mbc.alphaD);
   makeRandomVecVec(mbc.jointTorque);
 
-  for(std::size_t i = 0; i < mbc.q.size(); ++i)
-  {
-    if(mbc.q[i].size() == 4 || mbc.q[i].size() == 7)
-    {
+  for (std::size_t i = 0; i < mbc.q.size(); ++i) {
+    if (mbc.q[i].size() == 4 || mbc.q[i].size() == 7) {
       normalizeQuat(mbc.q[i]);
     }
   }
 }
 
-Eigen::MatrixXd makeHFromID(const rbd::MultiBody & mb,
-                            const rbd::MultiBodyConfig & mbc,
-                            rbd::InverseDynamics & id,
-                            const Eigen::VectorXd & C)
-{
+Eigen::MatrixXd makeHFromID(const rbd::MultiBody &mb,
+                            const rbd::MultiBodyConfig &mbc,
+                            rbd::InverseDynamics &id,
+                            const Eigen::VectorXd &C) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -145,28 +141,22 @@ Eigen::MatrixXd makeHFromID(const rbd::MultiBody & mb,
   VectorXd Hd(mb.nrDof());
 
   MultiBodyConfig mbcd(mbc);
-  for(auto & v1 : mbcd.alphaD)
-  {
-    for(auto & v2 : v1)
-    {
+  for (auto &v1 : mbcd.alphaD) {
+    for (auto &v2 : v1) {
       v2 = 0.;
     }
   }
 
   int col = 0;
-  for(int i = 0; i < mb.nrJoints(); ++i)
-  {
-    for(int j = 0; j < mb.joint(i).dof(); ++j)
-    {
+  for (int i = 0; i < mb.nrJoints(); ++i) {
+    for (int j = 0; j < mb.joint(i).dof(); ++j) {
       mbcd.alphaD[i][j] = 1.;
 
       id.inverseDynamics(mb, mbcd);
 
       int dof = 0;
-      for(auto & v1 : mbcd.jointTorque)
-      {
-        for(auto & v2 : v1)
-        {
+      for (auto &v1 : mbcd.jointTorque) {
+        for (auto &v2 : v1) {
           Hd(dof) = v2;
           ++dof;
         }
@@ -182,8 +172,7 @@ Eigen::MatrixXd makeHFromID(const rbd::MultiBody & mb,
   return H;
 }
 
-BOOST_AUTO_TEST_CASE(IDvsFDFixed)
-{
+BOOST_AUTO_TEST_CASE(IDvsFDFixed) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -191,10 +180,14 @@ BOOST_AUTO_TEST_CASE(IDvsFDFixed)
 
   typedef Matrix<double, 1, 1> EScalar;
 
-  RBInertiad I0(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
-  RBInertiad I1(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
-  RBInertiad I2(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
-  RBInertiad I3(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I0(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I1(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I2(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I3(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
 
   Body b0(I0, "b0");
   Body b1(I1, "b1");
@@ -216,9 +209,12 @@ BOOST_AUTO_TEST_CASE(IDvsFDFixed)
   mbg.addJoint(j1);
   mbg.addJoint(j2);
 
-  mbg.linkBodies("b0", PTransformd(Vector3d(0., 0.5, 0.)), "b1", PTransformd(Vector3d(0., -0.5, 0.)), "j0");
-  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b2", PTransformd(Vector3d(0., 0., 0.)), "j1");
-  mbg.linkBodies("b1", PTransformd(Vector3d(-0.5, 0., 0.)), "b3", PTransformd(Vector3d(0., 0., 0.)), "j2");
+  mbg.linkBodies("b0", PTransformd(Vector3d(0., 0.5, 0.)), "b1",
+                 PTransformd(Vector3d(0., -0.5, 0.)), "j0");
+  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b2",
+                 PTransformd(Vector3d(0., 0., 0.)), "j1");
+  mbg.linkBodies("b1", PTransformd(Vector3d(-0.5, 0., 0.)), "b3",
+                 PTransformd(Vector3d(0., 0., 0.)), "j2");
 
   MultiBody mb = mbg.makeMultiBody("b0", true);
 
@@ -227,8 +223,8 @@ BOOST_AUTO_TEST_CASE(IDvsFDFixed)
   mbc.q = {{}, {1., 0., 0., 0.}, {0.}, {0.}};
   mbc.alpha = {{}, {0., 0., 0.}, {0.}, {0.}};
   mbc.alphaD = {{}, {0., 0., 0.}, {0.}, {0.}};
-  mbc.force = {ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero()),
-               ForceVecd(Vector6d::Zero())};
+  mbc.force = {ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero()),
+               ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero())};
 
   forwardKinematics(mb, mbc);
   forwardVelocity(mb, mbc);
@@ -256,10 +252,8 @@ BOOST_AUTO_TEST_CASE(IDvsFDFixed)
 
   VectorXd ID_C(mb.nrDof());
   int dof = 0;
-  for(auto & v1 : mbc.jointTorque)
-  {
-    for(auto & v2 : v1)
-    {
+  for (auto &v1 : mbc.jointTorque) {
+    for (auto &v2 : v1) {
       ID_C(dof) = v2;
       ++dof;
     }
@@ -326,8 +320,7 @@ BOOST_AUTO_TEST_CASE(IDvsFDFixed)
   BOOST_CHECK_SMALL((vA1 - vA2).norm(), 1e-10);
 }
 
-BOOST_AUTO_TEST_CASE(IDvsFDFree)
-{
+BOOST_AUTO_TEST_CASE(IDvsFDFree) {
   using namespace Eigen;
   using namespace sva;
   using namespace rbd;
@@ -335,10 +328,14 @@ BOOST_AUTO_TEST_CASE(IDvsFDFree)
 
   typedef Matrix<double, 1, 1> EScalar;
 
-  RBInertiad I0(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
-  RBInertiad I1(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
-  RBInertiad I2(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
-  RBInertiad I3(EScalar::Random()(0) * 10., Vector3d::Random() * 10., Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I0(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I1(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I2(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
+  RBInertiad I3(EScalar::Random()(0) * 10., Vector3d::Random() * 10.,
+                Matrix3d::Random().triangularView<Lower>());
 
   Body b0(I0, "b0");
   Body b1(I1, "b1");
@@ -360,9 +357,12 @@ BOOST_AUTO_TEST_CASE(IDvsFDFree)
   mbg.addJoint(j1);
   mbg.addJoint(j2);
 
-  mbg.linkBodies("b0", PTransformd(Vector3d(0., 0.5, 0.)), "b1", PTransformd(Vector3d(0., -0.5, 0.)), "j0");
-  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b2", PTransformd(Vector3d(0., 0., 0.)), "j1");
-  mbg.linkBodies("b1", PTransformd(Vector3d(-0.5, 0., 0.)), "b3", PTransformd(Vector3d(0., 0., 0.)), "j2");
+  mbg.linkBodies("b0", PTransformd(Vector3d(0., 0.5, 0.)), "b1",
+                 PTransformd(Vector3d(0., -0.5, 0.)), "j0");
+  mbg.linkBodies("b1", PTransformd(Vector3d(0.5, 0., 0.)), "b2",
+                 PTransformd(Vector3d(0., 0., 0.)), "j1");
+  mbg.linkBodies("b1", PTransformd(Vector3d(-0.5, 0., 0.)), "b3",
+                 PTransformd(Vector3d(0., 0., 0.)), "j2");
 
   MultiBody mb = mbg.makeMultiBody("b0", false);
 
@@ -371,8 +371,8 @@ BOOST_AUTO_TEST_CASE(IDvsFDFree)
   mbc.q = {{1., 0., 0., 0., 0., 0., 0.}, {1., 0., 0., 0.}, {0.}, {0.}};
   mbc.alpha = {{0., 0., 0., 0., 0., 0.}, {0., 0., 0.}, {0.}, {0.}};
   mbc.alphaD = {{0., 0., 0., 0., 0., 0.}, {0., 0., 0.}, {0.}, {0.}};
-  mbc.force = {ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero()),
-               ForceVecd(Vector6d::Zero())};
+  mbc.force = {ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero()),
+               ForceVecd(Vector6d::Zero()), ForceVecd(Vector6d::Zero())};
 
   forwardKinematics(mb, mbc);
   forwardVelocity(mb, mbc);
@@ -400,10 +400,8 @@ BOOST_AUTO_TEST_CASE(IDvsFDFree)
 
   VectorXd ID_C(mb.nrDof());
   int dof = 0;
-  for(auto & v1 : mbc.jointTorque)
-  {
-    for(auto & v2 : v1)
-    {
+  for (auto &v1 : mbc.jointTorque) {
+    for (auto &v2 : v1) {
       ID_C(dof) = v2;
       ++dof;
     }
@@ -476,8 +474,7 @@ BOOST_AUTO_TEST_CASE(IDvsFDFree)
   BOOST_CHECK_SMALL((vA1 - vA2).norm(), 1e-10);
 }
 
-BOOST_AUTO_TEST_CASE(MultiBodyGraphMerge)
-{
+BOOST_AUTO_TEST_CASE(MultiBodyGraphMerge) {
   rbd::MultiBody mb;
   rbd::MultiBodyConfig mbc;
   rbd::MultiBodyGraph mbg;
@@ -510,7 +507,9 @@ BOOST_AUTO_TEST_CASE(MultiBodyGraphMerge)
 
   rbd::ForwardDynamics fd(mb);
   fd.forwardDynamics(mb, mbc);
-  double error = (fd.inertiaSubTree()[1].matrix() - mbMerged.body(1).inertia().matrix()).norm();
+  double error =
+      (fd.inertiaSubTree()[1].matrix() - mbMerged.body(1).inertia().matrix())
+          .norm();
 
   BOOST_CHECK_SMALL(error, TOL);
 }

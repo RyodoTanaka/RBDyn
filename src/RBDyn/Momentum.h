@@ -13,8 +13,7 @@
 
 #include <vector>
 
-namespace rbd
-{
+namespace rbd {
 class MultiBody;
 struct MultiBodyConfig;
 struct Block;
@@ -29,9 +28,9 @@ class Jacobian;
  * @param com CoM position.
  * @return centroidal momentum at the CoM frame.
  */
-RBDYN_DLLAPI sva::ForceVecd computeCentroidalMomentum(const MultiBody & mb,
-                                                      const MultiBodyConfig & mbc,
-                                                      const Eigen::Vector3d & com);
+RBDYN_DLLAPI sva::ForceVecd
+computeCentroidalMomentum(const MultiBody &mb, const MultiBodyConfig &mbc,
+                          const Eigen::Vector3d &com);
 
 /**
  * @brief Compute the time derivative of centroidal momentum at the CoM frame.
@@ -41,27 +40,26 @@ RBDYN_DLLAPI sva::ForceVecd computeCentroidalMomentum(const MultiBody & mb,
  * @param comDot CoM velocity.
  * @return Derivative of the centroidal momentum at the CoM frame.
  */
-RBDYN_DLLAPI sva::ForceVecd computeCentroidalMomentumDot(const MultiBody & mb,
-                                                         const MultiBodyConfig & mbc,
-                                                         const Eigen::Vector3d & com,
-                                                         const Eigen::Vector3d & comDot);
+RBDYN_DLLAPI sva::ForceVecd
+computeCentroidalMomentumDot(const MultiBody &mb, const MultiBodyConfig &mbc,
+                             const Eigen::Vector3d &com,
+                             const Eigen::Vector3d &comDot);
 
 /**
  * Compute the Centroidal momentum matrix (Jacobian)
  * as describe in [Orin and Gosawami 2008].
  */
-class RBDYN_DLLAPI CentroidalMomentumMatrix
-{
+class RBDYN_DLLAPI CentroidalMomentumMatrix {
 public:
   CentroidalMomentumMatrix();
 
   /// @param mb MultiBody used has model.
-  CentroidalMomentumMatrix(const MultiBody & mb);
+  CentroidalMomentumMatrix(const MultiBody &mb);
   /**
    * @param mb MultiBody used has model.
    * @param weight Per body weight.
    */
-  CentroidalMomentumMatrix(const MultiBody & mb, std::vector<double> weight);
+  CentroidalMomentumMatrix(const MultiBody &mb, std::vector<double> weight);
 
 public:
   /**
@@ -70,7 +68,8 @@ public:
    * @param mbc Use bodyPosW, motionSubspace.
    * @param com CoM position.
    */
-  void computeMatrix(const MultiBody & mb, const MultiBodyConfig & mbc, const Eigen::Vector3d & com);
+  void computeMatrix(const MultiBody &mb, const MultiBodyConfig &mbc,
+                     const Eigen::Vector3d &com);
 
   /**
    * Compute the time derivative of centroidal momentum matrix.
@@ -79,26 +78,25 @@ public:
    * @param com CoM position.
    * @param comDot CoM velocity.
    */
-  void computeMatrixDot(const MultiBody & mb,
-                        const MultiBodyConfig & mbc,
-                        const Eigen::Vector3d & com,
-                        const Eigen::Vector3d & comDot);
+  void computeMatrixDot(const MultiBody &mb, const MultiBodyConfig &mbc,
+                        const Eigen::Vector3d &com,
+                        const Eigen::Vector3d &comDot);
 
   /**
    * Compute the centroidal momentum matrix and his time derivative.
    * @see computeMatrix
    * @see computeMatrixDot
    */
-  void computeMatrixAndMatrixDot(const MultiBody & mb,
-                                 const MultiBodyConfig & mbc,
-                                 const Eigen::Vector3d & com,
-                                 const Eigen::Vector3d & comDot);
+  void computeMatrixAndMatrixDot(const MultiBody &mb,
+                                 const MultiBodyConfig &mbc,
+                                 const Eigen::Vector3d &com,
+                                 const Eigen::Vector3d &comDot);
 
   /// @return Centroidal momentum matrix
-  const Eigen::MatrixXd & matrix() const;
+  const Eigen::MatrixXd &matrix() const;
 
   /// @return Centroidal momentum matrix time derivative
-  const Eigen::MatrixXd & matrixDot() const;
+  const Eigen::MatrixXd &matrixDot() const;
 
   /**
    * Compute the centroidal momentum (with weight) (J·alpha).
@@ -107,7 +105,8 @@ public:
    * @param com CoM position.
    * @return Centroidal momentum at the CoM frame (with weight).
    */
-  sva::ForceVecd momentum(const MultiBody & mb, const MultiBodyConfig & mbc, const Eigen::Vector3d & com) const;
+  sva::ForceVecd momentum(const MultiBody &mb, const MultiBodyConfig &mbc,
+                          const Eigen::Vector3d &com) const;
 
   /**
    * Compute the normal componant of the time derivative of
@@ -119,10 +118,10 @@ public:
    * @return Normal componant of the time derivative Centroidal momentum
    *					at the CoM frame (with weight).
    */
-  sva::ForceVecd normalMomentumDot(const MultiBody & mb,
-                                   const MultiBodyConfig & mbc,
-                                   const Eigen::Vector3d & com,
-                                   const Eigen::Vector3d & comDot);
+  sva::ForceVecd normalMomentumDot(const MultiBody &mb,
+                                   const MultiBodyConfig &mbc,
+                                   const Eigen::Vector3d &com,
+                                   const Eigen::Vector3d &comDot);
 
   /**
    * Compute the normal componant of the time derivative of
@@ -135,59 +134,58 @@ public:
    * @return Normal componant of the time derivative Centroidal momentum
    *					at the CoM frame (with weight).
    */
-  sva::ForceVecd normalMomentumDot(const MultiBody & mb,
-                                   const MultiBodyConfig & mbc,
-                                   const Eigen::Vector3d & com,
-                                   const Eigen::Vector3d & comDot,
-                                   const std::vector<sva::MotionVecd> & normalAccB) const;
+  sva::ForceVecd
+  normalMomentumDot(const MultiBody &mb, const MultiBodyConfig &mbc,
+                    const Eigen::Vector3d &com, const Eigen::Vector3d &comDot,
+                    const std::vector<sva::MotionVecd> &normalAccB) const;
 
   // safe version for python binding
 
   /** safe version of @see computeMatrix.
    * @throw std::domain_error If mb don't match mbc.
    */
-  void sComputeMatrix(const MultiBody & mb, const MultiBodyConfig & mbc, const Eigen::Vector3d & com);
+  void sComputeMatrix(const MultiBody &mb, const MultiBodyConfig &mbc,
+                      const Eigen::Vector3d &com);
 
   /** safe version of @see computeMatrixDot.
    * @throw std::domain_error If mb don't match mbc.
    */
-  void sComputeMatrixDot(const MultiBody & mb,
-                         const MultiBodyConfig & mbc,
-                         const Eigen::Vector3d & com,
-                         const Eigen::Vector3d & comDot);
+  void sComputeMatrixDot(const MultiBody &mb, const MultiBodyConfig &mbc,
+                         const Eigen::Vector3d &com,
+                         const Eigen::Vector3d &comDot);
 
   /** safe version of @see computeMatrixAndMatrixDot.
    * @throw std::domain_error If mb don't match mbc.
    */
-  void sComputeMatrixAndMatrixDot(const MultiBody & mb,
-                                  const MultiBodyConfig & mbc,
-                                  const Eigen::Vector3d & com,
-                                  const Eigen::Vector3d & comDot);
+  void sComputeMatrixAndMatrixDot(const MultiBody &mb,
+                                  const MultiBodyConfig &mbc,
+                                  const Eigen::Vector3d &com,
+                                  const Eigen::Vector3d &comDot);
 
   /** safe version of @see momentum.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::ForceVecd sMomentum(const MultiBody & mb, const MultiBodyConfig & mbc, const Eigen::Vector3d & com) const;
+  sva::ForceVecd sMomentum(const MultiBody &mb, const MultiBodyConfig &mbc,
+                           const Eigen::Vector3d &com) const;
 
   /** safe version of @see normalMomentumDot.
    * @throw std::domain_error If mb don't match mbc.
    */
-  sva::ForceVecd sNormalMomentumDot(const MultiBody & mb,
-                                    const MultiBodyConfig & mbc,
-                                    const Eigen::Vector3d & com,
-                                    const Eigen::Vector3d & comDot);
+  sva::ForceVecd sNormalMomentumDot(const MultiBody &mb,
+                                    const MultiBodyConfig &mbc,
+                                    const Eigen::Vector3d &com,
+                                    const Eigen::Vector3d &comDot);
 
   /** safe version of @see normalMomentumDot.
    * @throw std::domain_error If mb don't match mbc or normalAccB.
    */
-  sva::ForceVecd sNormalMomentumDot(const MultiBody & mb,
-                                    const MultiBodyConfig & mbc,
-                                    const Eigen::Vector3d & com,
-                                    const Eigen::Vector3d & comDot,
-                                    const std::vector<sva::MotionVecd> & normalAccB) const;
+  sva::ForceVecd
+  sNormalMomentumDot(const MultiBody &mb, const MultiBodyConfig &mbc,
+                     const Eigen::Vector3d &com, const Eigen::Vector3d &comDot,
+                     const std::vector<sva::MotionVecd> &normalAccB) const;
 
 private:
-  void init(const rbd::MultiBody & mb);
+  void init(const rbd::MultiBody &mb);
 
 private:
   Eigen::MatrixXd cmMat_;
@@ -207,18 +205,18 @@ private:
  * @see computeCentroidalMomentum.
  * @throw std::domain_error If there is a mismatch between mb and mbc.
  */
-RBDYN_DLLAPI sva::ForceVecd sComputeCentroidalMomentum(const MultiBody & mb,
-                                                       const MultiBodyConfig & mbc,
-                                                       const Eigen::Vector3d & com);
+RBDYN_DLLAPI sva::ForceVecd
+sComputeCentroidalMomentum(const MultiBody &mb, const MultiBodyConfig &mbc,
+                           const Eigen::Vector3d &com);
 
 /**
  * Safe version.
  * @see computeCentroidalMomentumDot.
  * @throw std::domain_error If there is a mismatch between mb and mbc.
  */
-RBDYN_DLLAPI sva::ForceVecd sComputeCentroidalMomentumDot(const MultiBody & mb,
-                                                          const MultiBodyConfig & mbc,
-                                                          const Eigen::Vector3d & com,
-                                                          const Eigen::Vector3d & comDot);
+RBDYN_DLLAPI sva::ForceVecd
+sComputeCentroidalMomentumDot(const MultiBody &mb, const MultiBodyConfig &mbc,
+                              const Eigen::Vector3d &com,
+                              const Eigen::Vector3d &comDot);
 
 } // namespace rbd

@@ -13,8 +13,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-void setRandomFreeFlyer(rbd::MultiBodyConfig & mbc)
-{
+void setRandomFreeFlyer(rbd::MultiBodyConfig &mbc) {
   Eigen::Vector3d axis = Eigen::Vector3d::Random();
   Eigen::AngleAxisd aa(0.5, axis / axis.norm());
   Eigen::Quaterniond qd(aa);
@@ -24,8 +23,7 @@ void setRandomFreeFlyer(rbd::MultiBodyConfig & mbc)
   mbc.q[0][3] = qd.z();
 }
 
-BOOST_AUTO_TEST_CASE(CoriolisTest)
-{
+BOOST_AUTO_TEST_CASE(CoriolisTest) {
   std::srand(133757348);
 
   constexpr double TOL = 1e-6;
@@ -42,8 +40,7 @@ BOOST_AUTO_TEST_CASE(CoriolisTest)
 
   const static int ROUNDS = 100;
 
-  for(int i = 0; i < ROUNDS; ++i)
-  {
+  for (int i = 0; i < ROUNDS; ++i) {
     mbc.zero(mb);
 
     Eigen::VectorXd q = Eigen::VectorXd::Random(mb.nrParams());
